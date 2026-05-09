@@ -5,28 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>破局 - 历史切面中的抉择</title>
 <style>
-  /* ===== 本地字体 ===== */
-  @font-face {
-    font-family: 'Noto Serif SC';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: local('Noto Serif SC'), local('NotoSerifSC-Regular');
-  }
-  @font-face {
-    font-family: 'Noto Serif SC';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: local('Noto Serif SC'), local('NotoSerifSC-Bold');
-  }
-  @font-face {
-    font-family: 'Noto Serif SC';
-    font-style: normal;
-    font-weight: 900;
-    font-display: swap;
-    src: local('Noto Serif SC'), local('NotoSerifSC-Black');
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
 
   :root {
     --ink: #2C2826;
@@ -42,38 +21,46 @@
     --danger: #8B3A3A;
     --shadow: rgba(44, 40, 38, 0.08);
     --shadow-deep: rgba(44, 40, 38, 0.15);
+    --card-height: calc(100vh - 40px);
+    --card-max-width: 430px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
-    font-family: 'Noto Serif SC', 'PingFang SC', 'Microsoft YaHei', 'SimSun', serif;
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--paper);
     color: var(--ink);
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-x: hidden;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== 页面容器 ===== */
+  .app {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-width: var(--card-max-width);
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
   }
 
   .page {
     display: none;
-    min-height: 100vh;
-    min-height: 100dvh;
-    animation: fadeIn 0.5s ease;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
-  .page.active { display: block; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .page.active { display: flex; flex-direction: column; }
 
   /* ===== 标题页 ===== */
   .title-page {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 40px 24px;
@@ -93,6 +80,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Noto Serif SC', serif;
     font-size: 28px;
     color: var(--accent);
     transform: rotate(-12deg);
@@ -100,8 +88,8 @@
   }
 
   .game-title {
-    font-family: 'Noto Serif SC', 'SimSun', serif;
-    font-size: clamp(64px, 18vw, 120px);
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(56px, 15vw, 100px);
     font-weight: 900;
     color: var(--ink);
     letter-spacing: 0.15em;
@@ -110,10 +98,10 @@
   }
 
   .game-subtitle {
-    font-size: clamp(16px, 4vw, 20px);
+    font-size: clamp(14px, 3.5vw, 18px);
     color: var(--ink-soft);
     letter-spacing: 0.3em;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     font-weight: 300;
   }
 
@@ -121,33 +109,33 @@
     width: 80px;
     height: 3px;
     background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    margin: 0 auto 32px;
+    margin: 0 auto 28px;
   }
 
   .game-intro {
-    font-size: 15px;
-    line-height: 1.9;
+    font-size: 14px;
+    line-height: 1.8;
     color: var(--ink-lighter);
-    max-width: 320px;
-    margin: 0 auto 40px;
+    max-width: 300px;
+    margin: 0 auto 32px;
     text-align: left;
-    padding: 20px;
+    padding: 16px;
     background: var(--paper);
     border-radius: 12px;
     border-left: 3px solid var(--accent);
   }
 
-  .game-intro p { margin-bottom: 12px; }
+  .game-intro p { margin-bottom: 10px; }
   .game-intro p:last-child { margin-bottom: 0; }
 
   .btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 16px 48px;
+    padding: 14px 40px;
     background: var(--ink);
     color: white;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     letter-spacing: 0.2em;
     border: none;
@@ -155,7 +143,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
-    max-width: 280px;
+    max-width: 240px;
     touch-action: manipulation;
   }
 
@@ -166,26 +154,27 @@
 
   /* ===== 关卡选择 ===== */
   .levels-page {
-    padding: 24px 16px 40px;
+    padding: 20px 16px;
     background: linear-gradient(180deg, white 0%, var(--paper-warm) 100%);
+    overflow-y: auto;
   }
 
   .page-header {
     text-align: center;
-    margin-bottom: 24px;
-    padding-top: 20px;
+    margin-bottom: 20px;
+    padding-top: 16px;
   }
 
   .page-header h2 {
-    font-family: 'Noto Serif SC', 'SimSun', serif;
-    font-size: 24px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
     font-weight: 700;
     margin-bottom: 6px;
   }
 
   .page-header .hint {
     color: var(--ink-lighter);
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .level-card {
@@ -196,7 +185,6 @@
     border: 2px solid transparent;
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
     box-shadow: 0 2px 12px var(--shadow);
     touch-action: manipulation;
   }
@@ -215,7 +203,7 @@
   }
 
   .level-card .name {
-    font-family: 'Noto Serif SC', 'SimSun', serif;
+    font-family: 'Noto Serif SC', serif;
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 8px;
@@ -244,44 +232,65 @@
     color: var(--ink-lighter);
   }
 
-  .level-card .status {
-    font-size: 20px;
+  /* ===== 卡片式游戏页面 ===== */
+  .game-page {
+    background: var(--paper);
+    padding: 20px 16px;
+    align-items: center;
+    justify-content: center;
   }
 
-  /* ===== 游戏页面 ===== */
-  .game-page {
+  .game-card {
+    width: 100%;
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
     background: white;
-    min-height: 100vh;
-    min-height: 100dvh;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px var(--shadow-deep);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    animation: cardIn 0.4s ease;
   }
 
-  .story-header {
-    padding: 20px 20px 16px;
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .game-card.slide-out {
+    animation: cardOut 0.3s ease forwards;
+  }
+
+  @keyframes cardOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-100%); }
+  }
+
+  .card-header {
+    padding: 20px 20px 12px;
     background: linear-gradient(180deg, var(--paper-warm) 0%, white 100%);
     border-bottom: 1px solid var(--paper-dark);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    flex-shrink: 0;
   }
 
-  .story-era {
-    font-size: 12px;
+  .card-era {
+    font-size: 11px;
     color: var(--accent);
     letter-spacing: 0.15em;
     margin-bottom: 4px;
     font-weight: 500;
   }
 
-  .story-title {
-    font-family: 'Noto Serif SC', 'SimSun', serif;
-    font-size: 20px;
+  .card-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
     font-weight: 700;
     line-height: 1.3;
   }
 
-  .story-progress {
+  .card-progress {
     margin-top: 10px;
     height: 3px;
     background: var(--paper-dark);
@@ -289,75 +298,82 @@
     overflow: hidden;
   }
 
-  .story-progress-bar {
+  .card-progress-bar {
     height: 100%;
     background: linear-gradient(90deg, var(--accent), var(--gold));
     transition: width 0.5s ease;
     border-radius: 2px;
   }
 
-  .story-body {
-    padding: 24px 20px;
-    font-size: 16px;
-    line-height: 1.9;
+  .card-body {
+    padding: 20px;
+    font-size: 15px;
+    line-height: 1.8;
     color: var(--ink-soft);
+    overflow-y: auto;
     flex: 1;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .story-body p {
-    margin-bottom: 16px;
+  .card-body p {
+    margin-bottom: 12px;
     text-indent: 2em;
   }
 
-  .story-body .highlight {
+  .card-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .card-body .highlight {
     color: var(--ink);
     font-weight: 600;
     background: linear-gradient(180deg, transparent 60%, rgba(192, 60, 40, 0.15) 60%);
     padding: 0 2px;
   }
 
-  .story-body .dialogue {
-    padding: 16px;
+  .card-body .dialogue {
+    padding: 14px;
     background: var(--paper);
     border-radius: 12px;
-    margin: 16px 0;
+    margin: 14px 0;
     border-left: 3px solid var(--gold);
     text-indent: 0;
   }
 
-  .story-body .dialogue .speaker {
+  .card-body .dialogue .speaker {
     font-weight: 700;
-    font-style: normal;
     color: var(--accent);
     display: block;
     margin-bottom: 4px;
-    font-size: 14px;
+    font-size: 13px;
   }
 
-  .story-body .dialogue .content {
+  .card-body .dialogue .content {
     font-style: italic;
     color: var(--ink-soft);
   }
 
-  .choices-area {
-    padding: 0 20px 24px;
+  .card-choices {
+    padding: 0 16px 16px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .choice-btn {
     display: block;
     width: 100%;
-    padding: 18px 20px;
-    margin-bottom: 12px;
+    padding: 16px 18px;
     background: white;
     border: 2px solid var(--paper-dark);
     border-radius: 14px;
     text-align: left;
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.5;
     color: var(--ink);
     cursor: pointer;
     transition: all 0.2s ease;
-    position: relative;
     touch-action: manipulation;
     -webkit-appearance: none;
   }
@@ -373,7 +389,7 @@
     padding: 2px 8px;
     background: var(--accent);
     color: white;
-    font-size: 12px;
+    font-size: 11px;
     border-radius: 4px;
     margin-right: 8px;
     vertical-align: middle;
@@ -386,88 +402,108 @@
 
   /* ===== 结果页 ===== */
   .result-page {
-    padding: 40px 24px;
-    text-align: center;
+    padding: 20px 16px;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(180deg, white 0%, var(--paper-warm) 100%);
-    min-height: 100vh;
-    min-height: 100dvh;
+  }
+
+  .result-card {
+    width: 100%;
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px var(--shadow-deep);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    overflow: hidden;
+    animation: cardIn 0.4s ease;
+  }
+
+  .result-header {
+    padding: 24px 20px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--paper-warm) 0%, white 100%);
+    border-bottom: 1px solid var(--paper-dark);
+    flex-shrink: 0;
   }
 
   .result-icon {
-    font-size: 64px;
-    margin-bottom: 20px;
+    font-size: 48px;
+    margin-bottom: 12px;
   }
 
   .result-title {
-    font-family: 'Noto Serif SC', 'SimSun', serif;
-    font-size: 28px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 24px;
     font-weight: 700;
-    margin-bottom: 12px;
   }
 
   .result-title.win { color: var(--success); }
   .result-title.lose { color: var(--danger); }
   .result-title.neutral { color: var(--gold); }
 
+  .result-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .result-text {
-    font-size: 15px;
-    line-height: 1.9;
+    font-size: 14px;
+    line-height: 1.8;
     color: var(--ink-soft);
     text-align: left;
-    margin-bottom: 32px;
-    padding: 20px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px var(--shadow);
   }
 
   .result-text p {
     text-indent: 2em;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .result-text p:last-child { margin-bottom: 0; }
 
   .history-note {
-    padding: 16px 20px;
+    padding: 14px 16px;
     background: var(--paper);
     border-radius: 12px;
-    margin-bottom: 32px;
+    margin-top: 16px;
     text-align: left;
     border-left: 3px solid var(--gold);
   }
 
   .history-note h4 {
-    font-family: 'Noto Serif SC', 'SimSun', serif;
-    font-size: 15px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
     color: var(--accent);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .history-note p {
-    font-size: 13px;
-    line-height: 1.7;
+    font-size: 12px;
+    line-height: 1.6;
     color: var(--ink-lighter);
   }
 
   .result-actions {
+    padding: 16px;
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
+    flex-shrink: 0;
   }
 
   .btn-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 14px 28px;
+    padding: 12px 24px;
     background: white;
     color: var(--ink);
-    font-size: 15px;
+    font-size: 14px;
     border: 2px solid var(--paper-dark);
     border-radius: 12px;
     cursor: pointer;
@@ -485,43 +521,47 @@
   /* 返回按钮 */
   .back-btn {
     position: fixed;
-    top: 16px;
-    left: 16px;
-    width: 40px;
-    height: 40px;
+    top: 12px;
+    left: 12px;
+    width: 36px;
+    height: 36px;
     background: rgba(255,255,255,0.9);
     border: 1px solid var(--paper-dark);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
-    z-index: 100;
+    z-index: 1000;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     touch-action: manipulation;
   }
 
-  /* 底部安全区 */
-  .safe-bottom {
-    height: env(safe-area-inset-bottom, 20px);
-    min-height: 20px;
+  /* 步骤指示器 */
+  .step-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 100;
   }
 
-  /* 滚动条美化 */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--paper-dark); border-radius: 2px; }
+  .step-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--paper-dark);
+    transition: all 0.3s ease;
+  }
 
-  /* 加载动画 */
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    font-size: 14px;
-    color: var(--ink-lighter);
+  .step-dot.active {
+    background: var(--accent);
+    width: 20px;
+    border-radius: 3px;
   }
 
   /* 防止 iOS 橡皮筋效果 */
@@ -529,82 +569,77 @@
     overscroll-behavior-y: none;
   }
 
-  /* 离线提示 */
-  .offline-badge {
-    position: fixed;
-    top: 60px;
-    right: 16px;
-    background: var(--success);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .offline-badge.show {
-    opacity: 1;
-  }
+  /* 滚动条美化 */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--paper-dark); border-radius: 2px; }
 </style>
 </head>
 <body>
 
-<!-- 离线可用徽章 -->
-<div class="offline-badge" id="offlineBadge">✓ 离线可用</div>
+<div class="app">
 
-<!-- 标题页 -->
-<div class="page title-page active" id="titlePage">
-  <div class="stamp">危</div>
-  <div class="game-title">破局</div>
-  <div class="game-subtitle">历史切面中的抉择</div>
-  <div class="title-divider"></div>
-  <div class="game-intro">
-    <p>每一个时代都有困局中的人。</p>
-    <p>你将被抛入历史的某一个切面，成为一位面临绝境的人物。信息不完整，时间不多，对手在暗处。</p>
-    <p>这不是考验你的历史知识，而是考验你在绝境中的<strong>破局之力</strong>。</p>
+  <!-- 标题页 -->
+  <div class="page title-page active" id="titlePage">
+    <div class="stamp">危</div>
+    <div class="game-title">破局</div>
+    <div class="game-subtitle">历史切面中的抉择</div>
+    <div class="title-divider"></div>
+    <div class="game-intro">
+      <p>每一个时代都有困局中的人。</p>
+      <p>你将被抛入历史的某一个切面，成为一位面临绝境的人物。</p>
+      <p>这不是考验你的历史知识，而是考验你在绝境中的<strong>破局之力</strong>。</p>
+    </div>
+    <button class="btn-primary" onclick="showLevels()">进入历史</button>
   </div>
-  <button class="btn-primary" onclick="showLevels()">进入历史</button>
-</div>
 
-<!-- 关卡选择 -->
-<div class="page levels-page" id="levelsPage">
-  <div class="page-header">
-    <h2>选择你的困局</h2>
-    <p class="hint">每个故事约 5-10 分钟 · 失败可重来</p>
+  <!-- 关卡选择 -->
+  <div class="page levels-page" id="levelsPage">
+    <div class="page-header">
+      <h2>选择你的困局</h2>
+      <p class="hint">每个故事约 5-10 分钟 · 失败可重来</p>
+    </div>
+    <div id="levelsList"></div>
   </div>
-  <div id="levelsList"></div>
-</div>
 
-<!-- 游戏页 -->
-<div class="page game-page" id="gamePage">
-  <button class="back-btn" onclick="showLevels()">←</button>
-  <div class="story-header">
-    <div class="story-era" id="storyEra"></div>
-    <div class="story-title" id="storyTitle"></div>
-    <div class="story-progress">
-      <div class="story-progress-bar" id="progressBar" style="width: 0%"></div>
+  <!-- 游戏页 -->
+  <div class="page game-page" id="gamePage">
+    <button class="back-btn" onclick="showLevels()">←</button>
+    <div class="game-card" id="gameCard">
+      <div class="card-header">
+        <div class="card-era" id="cardEra"></div>
+        <div class="card-title" id="cardTitle"></div>
+        <div class="card-progress">
+          <div class="card-progress-bar" id="cardProgressBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="card-body" id="cardBody"></div>
+      <div class="card-choices" id="cardChoices"></div>
+    </div>
+    <div class="step-indicator" id="stepIndicator"></div>
+  </div>
+
+  <!-- 结果页 -->
+  <div class="page result-page" id="resultPage">
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-icon" id="resultIcon"></div>
+        <div class="result-title" id="resultTitle"></div>
+      </div>
+      <div class="result-body">
+        <div class="result-text" id="resultText"></div>
+        <div class="history-note" id="historyNote" style="display: none;">
+          <h4>📜 历史注脚</h4>
+          <p id="historyNoteText"></p>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-primary" onclick="retryLevel()" style="max-width: 140px; padding: 12px 20px; font-size: 14px;">重新破局</button>
+        <button class="btn-secondary" onclick="showLevels()">其他关卡</button>
+      </div>
     </div>
   </div>
-  <div class="story-body" id="storyBody"></div>
-  <div class="choices-area" id="choicesArea"></div>
-  <div class="safe-bottom"></div>
-</div>
 
-<!-- 结果页 -->
-<div class="page result-page" id="resultPage">
-  <div class="result-icon" id="resultIcon"></div>
-  <div class="result-title" id="resultTitle"></div>
-  <div class="result-text" id="resultText"></div>
-  <div class="history-note" id="historyNote" style="display: none;">
-    <h4>📜 历史注脚</h4>
-    <p id="historyNoteText"></p>
-  </div>
-  <div class="result-actions">
-    <button class="btn-primary" onclick="retryLevel()" style="max-width: 160px; padding: 14px 24px; font-size: 15px;">重新破局</button>
-    <button class="btn-secondary" onclick="showLevels()">其他关卡</button>
-  </div>
-  <div class="safe-bottom"></div>
 </div>
 
 <script>
@@ -658,7 +693,7 @@ const levels = [
           <p>程据沉默良久："陈医工，你知道陛下为什么选你吗？因为你无名无势。陛下要的不是诊断，是一个说法。"</p>
           <p>"齐王必须离开洛阳，但不能是陛下逼走的——必须是'身体不好'，该回去养病。"</p>
           <p>你明白了。说"有病"，齐王被逼走，你是替罪羊。说"没病"，齐王被治欺君之罪。</p>
-          <p>程据又说："但陛下也需要这个'说法'站得住脚。如果齐王真的在路上死了，而天下人都知道他是被逼死的，陛下也要担责。"</p>
+          <p>程据又说："但陛下也需要这个'说法'站得住脚。如果齐王死在路上，而天下人都知道他是被逼死的，陛下也要担责。"</p>
           <p class="dialogue"><span class="speaker">你</span><span class="content">"大人的意思是......"</span></p>
           <p>程据没有回答，只是看着你。</p>
         `,
@@ -1073,12 +1108,13 @@ const levels = [
 let currentLevel = null;
 let currentScene = null;
 let gameHistory = [];
+let stepCount = 0;
+let totalSteps = 0;
 
 // ==================== 页面切换 ====================
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
-  window.scrollTo(0, 0);
 }
 
 function showLevels() {
@@ -1095,7 +1131,6 @@ function renderLevels() {
       <div class="desc">${level.desc}</div>
       <div class="meta">
         <span class="tag">${level.tag}</span>
-        <span class="status">◯</span>
       </div>
     </div>
   `).join('');
@@ -1105,40 +1140,81 @@ function startLevel(levelId) {
   currentLevel = levels.find(l => l.id === levelId);
   currentScene = currentLevel.scenes.find(s => s.id === 'start');
   gameHistory = [];
+  stepCount = 1;
+  totalSteps = estimateSteps(currentLevel);
   showPage('gamePage');
-  renderScene();
+  renderCard();
 }
 
-function renderScene() {
-  document.getElementById('storyEra').textContent = currentLevel.era;
-  document.getElementById('storyTitle').textContent = currentLevel.name;
+function estimateSteps(level) {
+  // 估算最大步数（用于进度条）
+  let maxDepth = 0;
+  function countDepth(sceneId, depth) {
+    const scene = level.scenes.find(s => s.id === sceneId);
+    if (!scene) return;
+    if (scene.result) {
+      maxDepth = Math.max(maxDepth, depth);
+      return;
+    }
+    if (scene.choices) {
+      scene.choices.forEach(c => countDepth(c.next, depth + 1));
+    }
+  }
+  countDepth('start', 1);
+  return maxDepth || 5;
+}
 
-  const total = currentLevel.scenes.length;
-  const current = currentLevel.scenes.indexOf(currentScene);
-  const progress = ((current + 1) / total) * 100;
-  document.getElementById('progressBar').style.width = progress + '%';
+function renderCard() {
+  document.getElementById('cardEra').textContent = currentLevel.era;
+  document.getElementById('cardTitle').textContent = currentLevel.name;
 
-  document.getElementById('storyBody').innerHTML = currentScene.text;
+  const progress = Math.min((stepCount / totalSteps) * 100, 100);
+  document.getElementById('cardProgressBar').style.width = progress + '%';
 
-  const choicesHtml = currentScene.choices.map(choice => `
+  document.getElementById('cardBody').innerHTML = currentScene.text;
+
+  const choicesHtml = currentScene.choices ? currentScene.choices.map(choice => `
     <button class="choice-btn" onclick="makeChoice('${choice.next}')">
       <span class="choice-tag">${choice.tag}</span>
       <span class="choice-text">${choice.text}</span>
     </button>
-  `).join('');
-  document.getElementById('choicesArea').innerHTML = choicesHtml;
+  `).join('') : '';
+  document.getElementById('cardChoices').innerHTML = choicesHtml;
+
+  // 更新步骤指示器
+  updateStepIndicator();
+}
+
+function updateStepIndicator() {
+  const indicator = document.getElementById('stepIndicator');
+  const dots = [];
+  for (let i = 1; i <= totalSteps; i++) {
+    dots.push(`<div class="step-dot ${i === stepCount ? 'active' : ''}"></div>`);
+  }
+  indicator.innerHTML = dots.join('');
 }
 
 function makeChoice(nextSceneId) {
-  gameHistory.push({ scene: currentScene.id, choice: nextSceneId });
-  currentScene = currentLevel.scenes.find(s => s.id === nextSceneId);
+  // 卡片滑出动画
+  const card = document.getElementById('gameCard');
+  card.classList.add('slide-out');
 
-  if (currentScene.result) {
-    showResult(currentScene.result);
-  } else {
-    renderScene();
-    window.scrollTo(0, 0);
-  }
+  setTimeout(() => {
+    gameHistory.push({ scene: currentScene.id, choice: nextSceneId });
+    currentScene = currentLevel.scenes.find(s => s.id === nextSceneId);
+    stepCount++;
+
+    if (currentScene.result) {
+      showResult(currentScene.result);
+    } else {
+      card.classList.remove('slide-out');
+      renderCard();
+      // 重新触发动画
+      card.style.animation = 'none';
+      card.offsetHeight; // 触发重排
+      card.style.animation = 'cardIn 0.4s ease';
+    }
+  }, 300);
 }
 
 function showResult(result) {
@@ -1170,13 +1246,6 @@ function showResult(result) {
 function retryLevel() {
   startLevel(currentLevel.id);
 }
-
-// 检测离线状态并显示徽章
-window.addEventListener('load', () => {
-  if (navigator.onLine === false) {
-    document.getElementById('offlineBadge').classList.add('show');
-  }
-});
 
 // 初始化
 showPage('titlePage');
