@@ -926,7 +926,7 @@ const levels = [
           <p>你听着，心跳加速。这是赌博，但似乎是唯一的出路。</p>
         `,
         choices: [
-          { text: '决定：立刻挟天子去许昌！', next: 'xuchang', tag: '破局' },
+          { text: '立刻以天子名义写诏书，宣布司马懿谋反', next: 'write_edict', tag: 'A' },
           { text: '说：但我的家人还在洛阳......', next: 'family_concern', tag: 'B' },
           { text: '说：让我再考虑考虑', next: 'hesitate_cao', tag: 'C' }
         ]
@@ -942,10 +942,98 @@ const levels = [
           <p>杨综最后说："大将军，<span class="highlight">兵贵神速，犹豫即败</span>。"</p>
         `,
         choices: [
-          { text: '决定：立刻执行，挟天子去许昌！', next: 'xuchang', tag: '破局' },
+          { text: '立刻以天子名义写诏书，宣布司马懿谋反', next: 'write_edict', tag: 'A' },
           { text: '说：但司马懿已经控制了城门......', next: 'gate_concern', tag: 'B' },
           { text: '说：让我再想想', next: 'hesitate_cao', tag: 'C' }
         ]
+      },
+      {
+        id: 'write_edict',
+        text: `
+          <p>你下定决心，对皇帝说："陛下，太傅司马懿背弃顾命，关闭城门，图谋不轨。臣请陛下下诏，以正视听。"</p>
+          <p>皇帝年少，惊恐地点头。</p>
+          <p>你亲自执笔，写下诏书：</p>
+          <p class="dialogue"><span class="speaker">诏书</span><span class="content">"大将军曹爽辅政，司马懿背弃先帝遗命，擅闭城门，夺据武库，罪在不赦。天下诸侯，当共讨之。"</span></p>
+          <p>桓范看着诏书，眼中含泪："大将军，这才是正朔。"</p>
+          <p>诏书已成，接下来必须立刻行动。司马懿随时可能派兵追击。</p>
+        `,
+        choices: [
+          { text: '派桓范持诏书去城南别营，调兵护卫', next: ' mobilize_guard', tag: 'A' },
+          { text: '先派人去洛阳典农治所，调屯田兵', next: ' mobilize_farmers', tag: 'B' },
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'C' }
+        ]
+      },
+      {
+        id: ' mobilize_guard',
+        text: `
+          <p>桓范接过诏书，翻身上马："大将军，我去城南别营，一个时辰内带兵回来！"</p>
+          <p>你目送桓范离去，心中忐忑不安。</p>
+          <p>半个时辰后，远处传来马蹄声。桓范回来了，身后跟着三千精兵！</p>
+          <p>别营将领跪地："末将听候大将军调遣！"</p>
+          <p>你终于有了护卫天子的军队。但司马懿随时可能得知消息，必须尽快行动。</p>
+        `,
+        choices: [
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'A' },
+          { text: '再等等典农兵', next: 'wait_farmers', tag: 'B' }
+        ]
+      },
+      {
+        id: ' mobilize_farmers',
+        text: `
+          <p>你派司马鲁芝去洛阳典农治所调屯田兵。</p>
+          <p>鲁芝快马而去。你焦急等待。</p>
+          <p>一个时辰后，鲁芝回来，身后跟着两千屯田兵，还带着粮草辎重！</p>
+          <p>鲁芝说："大将军，典农兵虽非精锐，但熟悉地形，可作前锋。"</p>
+          <p>你点点头。军队已集，不能再等。</p>
+        `,
+        choices: [
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'A' },
+          { text: '再等等别营兵', next: 'wait_guard', tag: 'B' }
+        ]
+      },
+      {
+        id: 'wait_farmers',
+        text: `
+          <p>你说："再等等，等典农兵到了一起走。"</p>
+          <p>桓范急道："大将军，兵贵神速！司马懿随时可能派兵追击，我们不能等！"</p>
+          <p>但你坚持要等。又一个时辰过去了。</p>
+          <p>典农兵还没到。但斥候来报：司马懿派蒋济率五千兵出城，正向高平陵方向赶来！</p>
+          <p>桓范大喊："快走！再不走就来不及了！"</p>
+        `,
+        choices: [
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'A' },
+          { text: '说：但典农兵还没到......', next: 'hesitate_cao', tag: 'B' }
+        ]
+      },
+      {
+        id: 'wait_guard',
+        text: `
+          <p>你说："再等等，等别营兵到了一起走。"</p>
+          <p>司马鲁芝急道："大将军，司马懿已经知道我们调兵了！斥候来报，蒋济正率兵赶来！"</p>
+          <p>你犹豫了。再等，可能被包围；不等，兵力不足。</p>
+          <p>桓范说："大将军，三千兵加两千屯田兵，够了！关键是天子在手，政治正统在我们这边！"</p>
+        `,
+        choices: [
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'A' },
+          { text: '说：让我再想想......', next: 'hesitate_cao', tag: 'B' }
+        ]
+      },
+      {
+        id: 'rush_xuchang',
+        text: `
+          <p>你下令："全军起程，护卫天子，直奔许昌！"</p>
+          <p>三千别营兵在前开道，两千屯田兵护卫两翼，天子车驾在中军。</p>
+          <p>桓范高举大司农印："粮草无忧！"</p>
+          <p>你们连夜行军，一日一夜到达许昌。</p>
+          <p>许昌是旧都，有宫殿、有储备。你以天子名义发出诏书：司马懿谋反，天下诸侯当共讨之！</p>
+          <p>消息传开，天下震动。司马懿虽然控制了洛阳，但你手握天子——政治正统在你这边。</p>
+          <p>各地诸侯开始观望。有人支持你，有人观望，但没有人敢公开支持司马懿。</p>
+          <p>司马懿年事已高，时间站在你这边。<span class="highlight">你终于明白：手握王炸的人，不需要谈判</span>。</p>
+          <p>最终，司马懿在孤立中病逝。你回到洛阳，重掌大权。</p>
+          <p>这不是最体面的胜利，但你活下来了，你的家族也活下来了。</p>
+        `,
+        result: 'win',
+        historyNote: '历史上曹爽拒绝了桓范的建议，选择投降，最终被夷三族。桓范痛哭"曹子丹佳人，生汝兄弟，犊耳！"曹爽手握天子、军队、粮草、大司农印、许昌旧都，却相信司马懿"只免官"的承诺——这是历史上最典型的"承诺陷阱"。破局之道：挟天子以令诸侯，时间站在年轻人一边。'
       },
       {
         id: 'family_concern',
@@ -957,7 +1045,7 @@ const levels = [
           <p>你沉默了。桓范说得对，但你还是下不了决心。</p>
         `,
         choices: [
-          { text: '咬牙决定：走！去许昌！', next: 'xuchang', tag: '破局' },
+          { text: '咬牙决定：立刻以天子名义写诏书', next: 'write_edict', tag: 'A' },
           { text: '说：但我不能丢下家人......', next: 'hesitate_cao', tag: 'B' },
           { text: '说：或许司马懿会守信，只免官', next: 'rich_man', tag: 'C' }
         ]
@@ -972,7 +1060,7 @@ const levels = [
           <p>"<span class="highlight">他在城内虚张声势，我们在城外有兵有粮</span>。优势其实在我们这边。"</p>
         `,
         choices: [
-          { text: '恍然大悟：立刻挟天子去许昌！', next: 'xuchang', tag: '破局' },
+          { text: '恍然大悟：立刻以天子名义写诏书', next: 'write_edict', tag: 'A' },
           { text: '说：但如果他追击呢？', next: 'pursuit_concern', tag: 'B' },
           { text: '说：我还是不放心......', next: 'hesitate_cao', tag: 'C' }
         ]
@@ -987,7 +1075,7 @@ const levels = [
           <p>你终于明白了。司马懿的弱点是年龄，他的承诺是陷阱。</p>
         `,
         choices: [
-          { text: '下定决心：挟天子去许昌！', next: 'xuchang', tag: '破局' },
+          { text: '下定决心：立刻以天子名义写诏书', next: 'write_edict', tag: 'A' },
           { text: '说：但我需要时间准备......', next: 'hesitate_cao', tag: 'B' }
         ]
       },
