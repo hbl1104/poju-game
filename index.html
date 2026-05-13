@@ -1881,6 +1881,15 @@ function renderLevels() {
 }
 
 function startLevel(levelId) {
+  // 重置卡片动画状态（防止 retry 时卡片仍处于 slide-out 状态）
+  const card = document.getElementById('gameCard');
+  if (card) {
+    card.classList.remove('slide-out');
+    card.style.animation = 'none';
+    card.style.opacity = '1';
+    card.style.transform = 'none';
+  }
+  
   currentLevel = levels.find(l => l.id === levelId);
   currentScene = currentLevel.scenes.find(s => s.id === 'start');
   gameHistory = [];
