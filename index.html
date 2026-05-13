@@ -635,6 +635,7 @@
       </div>
       <div class="result-actions">
         <button class="btn-primary" onclick="retryLevel()" style="max-width: 140px; padding: 12px 20px; font-size: 14px;">重新破局</button>
+        <button class="btn-secondary" onclick="goBack()" style="max-width: 140px; padding: 12px 20px; font-size: 14px;">回到上一步</button>
         <button class="btn-secondary" onclick="showLevels()">其他关卡</button>
       </div>
     </div>
@@ -1013,7 +1014,8 @@ const levels = [
           <p>这是你最屈辱的时刻——一个皇子，必须用自我矮化来证明自己没有威胁。</p>
         `,
         choices: [
-          { text: '将书递入宫中，等待回复', next: 'wait_reply', tag: 'A' }
+          { text: '将书递入宫中，等待回复', next: 'wait_reply', tag: 'A' },
+          { text: '再读一遍，确认措辞无误', next: 'wait_reply', tag: 'B' }
         ]
       },
       {
@@ -1998,6 +2000,16 @@ function showResult(result) {
 
 function retryLevel() {
   startLevel(currentLevel.id);
+}
+
+function goBack() {
+  if (gameHistory.length > 0) {
+    const lastStep = gameHistory.pop();
+    currentScene = currentLevel.scenes.find(s => s.id === lastStep.scene);
+    stepCount--;
+    showPage('gamePage');
+    renderCard();
+  }
 }
 
 // 初始化
