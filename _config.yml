@@ -1,0 +1,4 @@
+# Jekyll配置
+# 禁用Jekyll处理，直接提供静态文件
+include:
+  - index.html
