@@ -1,4 +1,14 @@
 # Jekyll配置
-# 禁用Jekyll处理，直接提供静态文件
+# 禁用所有Jekyll处理，直接提供静态文件
 include:
   - index.html
+  - src
+  - assets
+  - scripts
+  - docs
+
+# 禁用主题
+theme: null
+
+# 禁用插件
+plugins: []
