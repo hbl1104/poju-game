@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>破局 - 历史切面中的抉择</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --ink: #2C2826;
+    --ink-soft: #5A5248;
+    --ink-lighter: #9A8E7E;
+    --paper: #F4EFE6;
+    --paper-warm: #EDE6D8;
+    --paper-dark: #E5DCC8;
+    --accent: #C03C28;
+    --accent-warm: #B85450;
+    --gold: #B8956A;
+    --success: #4A7C59;
+    --danger: #8B3A3A;
+    --shadow: rgba(44, 40, 38, 0.08);
+    --shadow-deep: rgba(44, 40, 38, 0.15);
+    --card-height: calc(100vh - 40px);
+    --card-max-width: 430px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== 页面容器 ===== */
+  .app {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-width: var(--card-max-width);
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .page.active { display: flex; flex-direction: column; }
+
+  /* ===== 标题页 ===== */
+  .title-page {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    background: linear-gradient(180deg, white 0%, var(--paper-warm) 100%);
+    text-align: center;
+    position: relative;
+  }
+
+  .title-page .stamp {
+    position: absolute;
+    top: 40px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px;
+    color: var(--accent);
+    transform: rotate(-12deg);
+    opacity: 0.7;
+  }
+
+  .game-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(56px, 15vw, 100px);
+    font-weight: 900;
+    color: var(--ink);
+    letter-spacing: 0.15em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .game-subtitle {
+    font-size: clamp(14px, 3.5vw, 18px);
+    color: var(--ink-soft);
+    letter-spacing: 0.3em;
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  .title-divider {
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 0 auto 28px;
+  }
+
+  .game-intro {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-lighter);
+    max-width: 300px;
+    margin: 0 auto 32px;
+    text-align: left;
+    padding: 16px;
+    background: var(--paper);
+    border-radius: 12px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .game-intro p { margin-bottom: 10px; }
+  .game-intro p:last-child { margin-bottom: 0; }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 40px;
+    background: var(--ink);
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 240px;
+    touch-action: manipulation;
+  }
+
+  .btn-primary:active {
+    background: var(--accent);
+    transform: scale(0.98);
+  }
+
+  /* ===== 关卡选择 ===== */
+  .levels-page {
+    padding: 20px 16px;
+    background: linear-gradient(180deg, white 0%, var(--paper-warm) 100%);
+    overflow-y: auto;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-top: 16px;
+  }
+
+  .page-header h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .page-header .hint {
+    color: var(--ink-lighter);
+    font-size: 12px;
+  }
+
+  .level-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px var(--shadow);
+    touch-action: manipulation;
+  }
+
+  .level-card:active {
+    transform: scale(0.98);
+    border-color: var(--gold);
+  }
+
+  .level-card .era {
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .level-card .name {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .level-card .desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .level-card .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .level-card .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--paper);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--ink-lighter);
+  }
+
+  /* ===== 卡片式游戏页面 ===== */
+  .game-page {
+    background: var(--paper);
+    padding: 20px 16px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .game-card {
+    width: 100%;
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px var(--shadow-deep);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    animation: cardIn 0.4s ease;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .game-card.slide-out {
+    animation: cardOut 0.3s ease forwards;
+  }
+
+  @keyframes cardOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-100%); }
+  }
+
+  .card-header {
+    padding: 20px 20px 12px;
+    background: linear-gradient(180deg, var(--paper-warm) 0%, white 100%);
+    border-bottom: 1px solid var(--paper-dark);
+    flex-shrink: 0;
+  }
+
+  .card-era {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .card-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .card-progress {
+    margin-top: 10px;
+    height: 3px;
+    background: var(--paper-dark);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .card-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    transition: width 0.5s ease;
+    border-radius: 2px;
+  }
+
+  .card-body {
+    padding: 20px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .card-body p {
+    margin-bottom: 12px;
+    text-indent: 2em;
+  }
+
+  .card-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .card-body .highlight {
+    color: var(--ink);
+    font-weight: 600;
+    background: linear-gradient(180deg, transparent 60%, rgba(192, 60, 40, 0.15) 60%);
+    padding: 0 2px;
+  }
+
+  .card-body .dialogue {
+    padding: 14px;
+    background: var(--paper);
+    border-radius: 12px;
+    margin: 14px 0;
+    border-left: 3px solid var(--gold);
+    text-indent: 0;
+  }
+
+  .card-body .dialogue .speaker {
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+
+  .card-body .dialogue .content {
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .card-choices {
+    padding: 0 16px 16px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .choice-btn {
+    display: block;
+    width: 100%;
+    padding: 16px 18px;
+    background: white;
+    border: 2px solid var(--paper-dark);
+    border-radius: 14px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+  }
+
+  .choice-btn:active {
+    border-color: var(--gold);
+    background: var(--paper);
+    transform: scale(0.98);
+  }
+
+  .choice-btn .choice-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    border-radius: 4px;
+    margin-right: 8px;
+    vertical-align: middle;
+    font-weight: 500;
+  }
+
+  .choice-btn .choice-text {
+    vertical-align: middle;
+  }
+
+  /* ===== 结果页 ===== */
+  .result-page {
+    padding: 20px 16px;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, white 0%, var(--paper-warm) 100%);
+  }
+
+  .result-card {
+    width: 100%;
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px var(--shadow-deep);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: cardIn 0.4s ease;
+  }
+
+  .result-header {
+    padding: 24px 20px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--paper-warm) 0%, white 100%);
+    border-bottom: 1px solid var(--paper-dark);
+    flex-shrink: 0;
+  }
+
+  .result-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  .result-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .result-title.win { color: var(--success); }
+  .result-title.lose { color: var(--danger); }
+  .result-title.neutral { color: var(--gold); }
+
+  .result-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .result-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    text-align: left;
+  }
+
+  .result-text p {
+    text-indent: 2em;
+    margin-bottom: 10px;
+  }
+
+  .result-text p:last-child { margin-bottom: 0; }
+
+  .history-note {
+    padding: 14px 16px;
+    background: var(--paper);
+    border-radius: 12px;
+    margin-top: 16px;
+    text-align: left;
+    border-left: 3px solid var(--gold);
+  }
+
+  .history-note h4 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .history-note p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--ink-lighter);
+  }
+
+  .result-actions {
+    padding: 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .btn-feedback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background: transparent;
+    color: var(--ink-lighter);
+    font-size: 13px;
+    border: 1px solid var(--paper-dark);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    margin-top: 8px;
+  }
+
+  .btn-feedback:active {
+    border-color: var(--gold);
+    color: var(--ink);
+    transform: scale(0.98);
+  }
+
+  /* ===== 反馈页 ===== */
+  .feedback-page {
+    padding: 20px 16px;
+    background: linear-gradient(180deg, white 0%, var(--paper-warm) 100%);
+    overflow-y: auto;
+    align-items: center;
+  }
+
+  .feedback-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  .feedback-card h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .feedback-card .subtitle {
+    font-size: 13px;
+    color: var(--ink-lighter);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .feedback-field {
+    margin-bottom: 20px;
+  }
+
+  .feedback-field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .priority-options {
+    display: flex;
+    gap: 8px;
+  }
+
+  .priority-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border: 2px solid var(--paper-dark);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+  }
+
+  .priority-btn .level {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .priority-btn .desc {
+    font-size: 11px;
+    color: var(--ink-lighter);
+  }
+
+  .priority-btn.selected {
+    border-color: var(--accent);
+    background: rgba(192, 60, 40, 0.05);
+  }
+
+  .priority-btn.selected .level {
+    color: var(--accent);
+  }
+
+  .feedback-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 2px solid var(--paper-dark);
+    border-radius: 10px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    -webkit-appearance: none;
+  }
+
+  .feedback-textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  .feedback-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .feedback-actions button {
+    flex: 1;
+  }
+
+  .feedback-success {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .feedback-success .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .feedback-success h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .feedback-success p {
+    font-size: 14px;
+    color: var(--ink-lighter);
+    margin-bottom: 24px;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    background: white;
+    color: var(--ink);
+    font-size: 14px;
+    border: 2px solid var(--paper-dark);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+  }
+
+  .btn-secondary:active {
+    border-color: var(--gold);
+    background: var(--paper);
+    transform: scale(0.98);
+  }
+
+  /* 返回按钮 */
+  .back-btn {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid var(--paper-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    touch-action: manipulation;
+  }
+
+  /* 步骤指示器 */
+  .step-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 100;
+  }
+
+  .step-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--paper-dark);
+    transition: all 0.3s ease;
+  }
+
+  .step-dot.active {
+    background: var(--accent);
+    width: 20px;
+    border-radius: 3px;
+  }
+
+  /* 防止 iOS 橡皮筋效果 */
+  body {
+    overscroll-behavior-y: none;
+  }
+
+  /* 滚动条美化 */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--paper-dark); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- 标题页 -->
+  <div class="page title-page active" id="titlePage">
+    <div class="stamp">危</div>
+    <div class="game-title">破局</div>
+    <div class="game-subtitle">历史切面中的抉择</div>
+    <div class="title-divider"></div>
+    <div class="game-intro">
+      <p>每一个时代都有困局中的人。</p>
+      <p>你将被抛入历史的某一个切面，成为一位面临绝境的人物。</p>
+      <p>这不是考验你的历史知识，而是考验你在绝境中的<strong>破局之力</strong>。</p>
+    </div>
+    <button class="btn-primary" onclick="showLevels()">进入历史</button>
+  </div>
+
+  <!-- 关卡选择 -->
+  <div class="page levels-page" id="levelsPage">
+    <div class="page-header">
+      <h2>选择你的困局</h2>
+      <p class="hint">每个故事约 5-10 分钟 · 失败可重来</p>
+    </div>
+    <div id="levelsList"></div>
+  </div>
+
+  <!-- 游戏页 -->
+  <div class="page game-page" id="gamePage">
+    <button class="back-btn" onclick="showLevels()">←</button>
+    <div class="game-card" id="gameCard">
+      <div class="card-header">
+        <div class="card-era" id="cardEra"></div>
+        <div class="card-title" id="cardTitle"></div>
+        <div class="card-progress">
+          <div class="card-progress-bar" id="cardProgressBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="card-body" id="cardBody"></div>
+      <div class="card-choices" id="cardChoices"></div>
+    </div>
+    <div class="step-indicator" id="stepIndicator"></div>
+  </div>
+
+  <!-- 结果页 -->
+  <div class="page result-page" id="resultPage">
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-icon" id="resultIcon"></div>
+        <div class="result-title" id="resultTitle"></div>
+      </div>
+      <div class="result-body">
+        <div class="result-text" id="resultText"></div>
+        <div class="history-note" id="historyNote" style="display: none;">
+          <h4>📜 历史注脚</h4>
+          <p id="historyNoteText"></p>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-primary" onclick="retryLevel()" style="max-width: 140px; padding: 12px 20px; font-size: 14px;">重新破局</button>
+        <button class="btn-secondary" onclick="goBack()" style="max-width: 140px; padding: 12px 20px; font-size: 14px;">回到上一步</button>
+        <button class="btn-secondary" onclick="showLevels()">其他关卡</button>
+      </div>
+      <div style="text-align: center;">
+        <button class="btn-feedback" onclick="showFeedback()">💬 提交反馈建议</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 反馈页 -->
+  <div class="page feedback-page" id="feedbackPage">
+    <div class="feedback-card" id="feedbackForm">
+      <h3>💬 反馈建议</h3>
+      <p class="subtitle">帮助我们优化「破局」的游戏体验</p>
+
+      <div class="feedback-field">
+        <label>优先级</label>
+        <div class="priority-options">
+          <div class="priority-btn" onclick="selectPriority('P0', this)">
+            <span class="level">🔴 P0</span>
+            <span class="desc">紧急</span>
+          </div>
+          <div class="priority-btn" onclick="selectPriority('P1', this)">
+            <span class="level">🟡 P1</span>
+            <span class="desc">重要</span>
+          </div>
+          <div class="priority-btn" onclick="selectPriority('P2', this)">
+            <span class="level">🟢 P2</span>
+            <span class="desc">建议</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="feedback-field">
+        <label>优化建议</label>
+        <textarea class="feedback-textarea" id="feedbackText" placeholder="描述你遇到的问题或优化建议..."></textarea>
+      </div>
+
+      <div class="feedback-actions">
+        <button class="btn-secondary" onclick="showLevels()">取消</button>
+        <button class="btn-primary" onclick="submitFeedback()">提交</button>
+      </div>
+    </div>
+
+    <div class="feedback-card feedback-success" id="feedbackSuccess" style="display: none;">
+      <div class="icon">✅</div>
+      <h3>反馈已提交</h3>
+      <p>感谢你的建议，我们会认真评估每一条反馈</p>
+      <button class="btn-primary" onclick="showLevels()" style="max-width: 200px;">返回关卡列表</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ==================== 游戏数据 ====================
+const levels = [
+  {
+    id: 'jingke',
+    era: '战国 · 秦王政二十年（前227年）',
+    name: '药囊掷荆轲',
+    desc: '荆轲的匕首已经出鞘，秦王绕柱奔逃。你手中只有一个药囊——粗布缝制，里面装着草药和几枚砭石。',
+    tag: '以弱胜强',
+    scenes: [
+      {
+        id: 'start',
+        text: `
+          <p>你是<span class="highlight">夏无且</span>，秦宫侍医。今日当值，随侍于咸阳宫大殿。</p>
+          <p>殿上，燕国使者荆轲正捧着一只木匣，匣中是叛将樊於期的首级。副使秦舞阳捧着一卷地图——督亢之地，燕国最肥美的土地。</p>
+          <p>秦王嬴政坐于上首，目光淡漠。他刚刚灭了赵国，燕国派使者来献地求和，不过是意料之中的臣服。</p>
+          <p>荆轲上前，说："燕王诚振怖大王之威，不敢举兵以逆军吏，愿举国为内臣，比诸侯之列。"</p>
+          <p>他展开地图，一寸一寸，缓缓展开。</p>
+          <p>你站在秦王身侧，手中提着药囊——里面不过是些寻常药材和医具。你的职责是在秦王不适时递上药丸。</p>
+          <p>地图展到尽头。突然，<span class="highlight">一柄匕首从图卷中滑落</span>。</p>
+          <p>荆轲左手抓住秦王衣袖，右手抓起匕首，直刺秦王！</p>
+          <p>秦王大惊，向后挣脱，衣袖撕裂。他拔剑——剑太长，仓促间拔不出来！</p>
+          <p>荆轲追刺，秦王绕着殿柱奔逃。殿上群臣无人携带兵器，殿外武士无诏不得上殿。</p>
+          <p>你站在原地，大脑一片空白。荆轲的匕首闪着寒光，秦王的生命以秒计算。</p>
+          <p>你手中只有一个<span class="highlight">药囊</span>——粗布缝制，里面装着草药和几枚砭石。</p>
+        `,
+        choices: [
+          { text: '扑上去，用身体挡住荆轲', next: 'body_block', tag: 'A' },
+          { text: '大喊"王负剑"，提醒秦王把剑推到背后拔剑', next: 'shout_sword', tag: 'B' },
+          { text: '将药囊掷向荆轲', next: 'throw_bag', tag: 'C' }
+        ]
+      },
+      {
+        id: 'body_block',
+        text: `
+          <p>你扑向荆轲，想用身体挡住他。</p>
+          <p>但荆轲是天下闻名的刺客，身手敏捷。他侧身一闪，匕首划过你的胸膛。</p>
+          <p>你倒在地上，鲜血涌出。你没能挡住他，反而成了他的垫脚石。</p>
+          <p>荆轲跨过你的身体，继续追刺秦王。</p>
+          <p>最终，秦王绕柱奔逃，仍未能拔剑。荆轲的匕首刺入了秦王的胸膛。</p>
+          <p>你躺在血泊中，看着秦王倒下。你死了，秦王也死了。</p>
+          <p><span class="highlight">用身体挡匕首，需要速度和力量。一个侍医，两者皆无</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '荆轲是职业刺客，身手远超普通侍医。赤手空拳扑上去，等同于送死。历史上没有侍医试图用身体挡匕首——不是因为怯懦，而是因为无效。'
+      },
+      {
+        id: 'shout_sword',
+        text: `
+          <p>你大喊："王负剑！王负剑！"</p>
+          <p>你的声音在殿中回荡。秦王听见了——他把长剑推到背后，终于拔出了剑！</p>
+          <p>但荆轲也听见了。他意识到时间紧迫，不再绕柱追击，而是直接扑向秦王。</p>
+          <p>秦王刚拔出剑，还没来得及转身，荆轲已经近身。</p>
+          <p>匕首刺入秦王的肩膀。秦王挥剑，砍断荆轲的左腿。荆轲倒地，将匕首掷向秦王——击中秦王的右腿。</p>
+          <p>秦王重伤，但还活着。荆轲被随后赶来的武士杀死。</p>
+          <p>你活下来了，秦王也活下来了。但秦王记住了你——<span class="highlight">一个只动口、不动手的人</span>。</p>
+          <p>事后，秦王论功行赏。武士获赏，你仅得口头嘉许。因为你没有真正阻止荆轲，只是提醒了秦王。</p>
+        `,
+        result: 'neutral',
+        historyNote: '"王负剑"是历史上真实发生的细节。但提醒秦王拔剑，只是辅助行为，不是直接阻止刺客。在危机中，"提醒"不如"行动"有价值。'
+      },
+      {
+        id: 'throw_bag',
+        text: `
+          <p>你抓起药囊，用力掷向荆轲。</p>
+          <p>药囊不大，粗布缝制，里面装着草药和砭石。它不像刀剑那样锋利，也不像石头那样沉重。</p>
+          <p>但它有一个特点：<span class="highlight">它是荆轲唯一没有预料到的东西</span>。</p>
+          <p>荆轲的全部注意力都在秦王身上。他没想到，殿上一个手无寸铁的侍医会向他投掷东西。</p>
+          <p>药囊砸中荆轲的面部——草药飞散，砭石击中他的眼睛。荆轲本能地抬手遮挡，脚步一滞。</p>
+          <p>这一滞，只有一秒。但<span class="highlight">这一秒，救了秦王的命</span>。</p>
+          <p>秦王趁机将剑推到背后，拔剑出鞘，一剑砍断荆轲的左腿。荆轲倒地，被随后赶来的武士杀死。</p>
+          <p>你站在原地，药囊已经空了，粗布散落在地。秦王看着你，目光复杂。</p>
+          <p>他什么也没说。但你知道，他记住了你。</p>
+        `,
+        result: 'win',
+        historyNote: '历史上夏无且确实以药囊掷荆轲，为秦王争取了拔剑的时间。《史记·刺客列传》记载："是时侍医夏无且以其所奉药囊提荆轲。""提"即投掷。这是历史上最著名的"以弱胜强"瞬间——手无寸铁的侍医，用一个药囊，改变了历史的走向。破局核心：在刺客全神贯注时，用他无法预料的干扰，创造致命的时间差。'
+      }
+    ]
+  },
+  {
+    id: 'gongzigao',
+    era: '秦 · 二世元年',
+    name: '郦山之足',
+    desc: '你的兄弟姊妹正在被胡亥逐一诛杀。你是秦始皇之子，却必须用自我矮化来换取家族生存。',
+    tag: '驯服之局',
+    scenes: [
+      {
+        id: 'start',
+        text: `
+          <p>你是<span class="highlight">公子高</span>，秦始皇之子，胡亥之兄。</p>
+          <p>此刻你在咸阳府中。三日前，沙丘传来消息：父皇驾崩，胡亥继位。</p>
+          <p>你心中不安。长子扶苏在北方监军，理应继位。但来使说，扶苏已奉诏自杀——诏书称他"为人子不孝，其赐剑以自裁"。</p>
+          <p>蒙恬，大秦三十万长城军的统帅，也已被赐死。</p>
+          <p>你的妻子抱着幼子，站在屏风旁。她没说话，但你知道她在想什么：胡亥是怎么继位的？那道诏书，真的是父皇的意思吗？</p>
+          <p>秦朝实行<span class="highlight">什伍连坐</span>：一家犯罪，邻里同罪。你的府中有妻妾、幼子、门客、仆从数十人。你若出事，他们皆会被"收族"。</p>
+          <p>窗外传来马蹄声。你走到窗边，看见一队禁军驰过街道，朝另一位公子的府邸方向而去。</p>
+          <p>胡亥的清洗，已经开始了。</p>
+        `,
+        choices: [
+          { text: '让妻子收拾细软，准备逃亡', next: 'escape_plan', tag: 'A' },
+          { text: '去找其他兄弟，商议联合反抗', next: 'rebel_plan', tag: 'B' },
+          { text: '上书胡亥，表示恭贺与臣服', next: 'flatter_plan', tag: 'C' },
+          { text: '闭门不出，静观其变', next: 'wait_plan', tag: 'D' }
+        ]
+      },
+      {
+        id: 'escape_plan',
+        text: `
+          <p>你让妻子收拾细软，准备趁夜逃离咸阳。</p>
+          <p>但你的门客拦住了你："公子，秦朝户籍严密，'使黔首自实田'，每个人都要登记在册。咸阳城门有卫尉把守，出城需要符传。"</p>
+          <p>"而且，"他压低声音，"<span class="highlight">什伍连坐</span>——你逃了，你的邻居、你的仆从，都要连坐。他们会为了自保，立刻告发你。"</p>
+          <p>你的妻子抱着孩子，看着你。孩子还不懂事，正抓着母亲的衣襟玩耍。</p>
+          <p>你想起了公子将闾——你的另一位兄弟。他也被围在内宫，"欲奔"而不得，最终被迫自杀。</p>
+          <p>逃亡，意味着放弃家人。不逃，意味着等死。</p>
+        `,
+        choices: [
+          { text: '坚持逃亡，独自出城，日后再接应家人', next: 'escape_alone', tag: 'A' },
+          { text: '放弃逃亡，另寻他法', next: 'rethink_escape', tag: 'B' }
+        ]
+      },
+      {
+        id: 'escape_alone',
+        text: `
+          <p>你决定独自逃亡。深夜，你换上便服，从府邸后门潜出。</p>
+          <p>咸阳城实行宵禁，夜间不得通行。你躲在阴影中，避开巡逻的士卒，向城门摸去。</p>
+          <p>但城门口的火把明亮，卫尉的士卒正在盘查每一个试图出城的人。你没有符传，根本无法通过。</p>
+          <p>你退入一条小巷，思考对策。这时，你听见身后传来脚步声——是邻居。他认出了你，眼中闪过惊恐。</p>
+          <p>在秦朝，<span class="highlight">藏匿逃亡者，与逃亡者同罪</span>。你的邻居不会帮你，他只会告发你，以保全自己。</p>
+          <p>你转身就跑，但已经晚了。邻居的喊声惊动了巡逻的士卒。你被围在巷中，无处可逃。</p>
+        `,
+        choices: [
+          { text: '束手就擒', next: 'captured', tag: 'A' },
+          { text: '试图翻越城墙', next: 'climb_wall', tag: 'B' }
+        ]
+      },
+      {
+        id: 'captured',
+        text: `
+          <p>你被押回府邸。胡亥的使者已经等在那里。</p>
+          <p>"公子高欲奔，罪加一等。"使者宣读诏书，"收族。"</p>
+          <p>你的妻子、幼子、门客、仆从，全部被押走。秦朝的"族诛"，意味着父母、妻子、同产、三族之内，皆连坐。</p>
+          <p>你被押往咸阳市集，与另外十一位兄弟一起，被公开处决。</p>
+          <p>你本可以换一种方式。但<span class="highlight">在绝对控制的社会里，逃亡是最危险的选择</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '秦朝实行严密的户籍和连坐制度。公子将闾兄弟三人"欲奔"而不得，被围在内宫被迫自杀。《史记·秦始皇本纪》记载："公子十二人戮死咸阳市"——所有反抗或逃亡的宗室，皆被公开处决。'
+      },
+      {
+        id: 'climb_wall',
+        text: `
+          <p>你试图翻越咸阳城墙。城墙高三丈，你抓住砖缝，艰难攀爬。</p>
+          <p>但城墙上有巡城的士卒。他们发现你，大喊："有贼！"</p>
+          <p>箭矢射来，你中箭坠落。你被押回，罪名从"欲奔"升级为"越城"。</p>
+          <p>你的家人被收族，你被处以车裂。</p>
+          <p><span class="highlight">在秦朝，城墙不仅是防御工事，也是控制人民的牢笼</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '秦朝法律严苛，《秦律》规定"越城"为重罪。在高度监控的社会中，物理逃亡的成功率极低。'
+      },
+      {
+        id: 'rethink_escape',
+        text: `
+          <p>你放弃了逃亡计划。</p>
+          <p>但清洗仍在继续。每天，你都能听到新的消息：某位公子被处死，某位公主被"矺死"（分裂肢体）。</p>
+          <p>你的府邸外开始出现陌生的面孔——是赵高的人，在监视你。</p>
+          <p>你再次面临抉择。</p>
+        `,
+        choices: [
+          { text: '再次尝试逃亡，这次带家人一起走', next: 'escape_family', tag: 'A' },
+          { text: '转向沉默，静观其变', next: 'wait_plan', tag: 'B' }
+        ]
+      },
+      {
+        id: 'escape_family',
+        text: `
+          <p>你决定带家人一起逃亡。</p>
+          <p>但你的妻子拒绝了："公子，孩子才三岁，走不了远路。而且，一家人一起出城，太过显眼。"</p>
+          <p>她说得对。秦朝的城门盘查严格，一家老小更容易引起怀疑。</p>
+          <p>你陷入了更深的绝望。独自逃，家人必死；带家人逃，谁也走不了。</p>
+          <p>这时，你的老门客说："公子，<span class="highlight">逃亡不是唯一的出路</span>。"</p>
+        `,
+        choices: [
+          { text: '问他还有什么出路', next: 'ask_way_out', tag: 'A' },
+          { text: '决定不再逃亡，寻找其他破局之法', next: 'sacrifice_path', tag: 'B' }
+        ]
+      },
+      {
+        id: 'ask_way_out',
+        text: `
+          <p>老门客说："公子，胡亥杀宗室，是因为怕你们争位。你若主动放弃一切，甚至主动求死，他反而不会杀你。"</p>
+          <p>"因为杀一个已经放弃的人，没有意义。"</p>
+          <p>你沉默了。这是你最不愿听到的答案——<span class="highlight">以屈辱换生存</span>。</p>
+          <p>但你知道，这可能是唯一的生路。</p>
+        `,
+        choices: [
+          { text: '接受这个建议，准备上书殉葬', next: 'sacrifice_path', tag: 'A' },
+          { text: '拒绝，宁愿战死也不屈辱求生', next: 'fight_die', tag: 'B' }
+        ]
+      },
+      {
+        id: 'fight_die',
+        text: `
+          <p>你拒绝了老门客的建议。</p>
+          <p>"我是秦始皇之子，岂能向胡亥乞怜？"</p>
+          <p>你拔出佩剑，冲出府门。但府外早已被赵高的人包围。你的反抗，不过是给他们提供了一个"谋反"的罪名。</p>
+          <p>你被当场格杀。你的家人被收族。你的死亡，被记录为"公子高谋反，伏诛"。</p>
+          <p><span class="highlight">在绝对暴力面前，尊严是最昂贵的奢侈品</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '秦朝宗室在清洗期间没有任何反抗成功的记录。蒙恬手握三十万大军，接到伪诏后也选择自杀，而非反抗。在高度集权的秦朝，个体反抗的成功率接近于零。'
+      },
+      {
+        id: 'rebel_plan',
+        text: `
+          <p>你决定联络其他兄弟，联合反抗。</p>
+          <p>你秘密派人去联系公子将闾。但使者回来告诉你：将闾的府邸已被禁军包围，他本人被囚于内宫，"欲奔"而不得。</p>
+          <p>你又去联系其他公子。但每个人都自身难保，无人敢响应。</p>
+          <p>你的门客说："公子，蒙恬手握三十万长城军，接到一道伪诏就自杀了。宗室之中，没有人有兵权。拿什么反抗？"</p>
+          <p>秦朝的<span class="highlight">军功爵制</span>，让军队只听命于皇帝。胡亥继位后，军权已通过赵高牢牢掌控。</p>
+        `,
+        choices: [
+          { text: '继续联络，哪怕只有一线希望', next: 'rebel_continue', tag: 'A' },
+          { text: '放弃反抗，寻找其他出路', next: 'rethink_rebel', tag: 'B' }
+        ]
+      },
+      {
+        id: 'rebel_continue',
+        text: `
+          <p>你继续秘密联络其他兄弟。</p>
+          <p>但你的行动被赵高的眼线发现。赵高正需要"谋反"的罪名来立威。</p>
+          <p>禁军包围了你的府邸。使者宣读诏书："公子高勾结宗室，图谋不轨，收族。"</p>
+          <p>你被押往咸阳市集，与另外十一位兄弟一起被处死。你的家人无一幸免。</p>
+          <p>你的"联合反抗"，不过是给赵高提供了一个完美的借口。</p>
+        `,
+        result: 'lose',
+        historyNote: '赵高需要立威，主动制造罪名。《史记·秦始皇本纪》记载："群臣诸公子有罪，辄下高，令鞠治之"——罪名是赵高"鞠治"（审讯制造）出来的，不是真实存在的。'
+      },
+      {
+        id: 'rethink_rebel',
+        text: `
+          <p>你放弃了反抗的念头。</p>
+          <p>但清洗仍在继续。你每天都能听到新的死讯。</p>
+          <p>你的府邸外开始出现陌生的面孔——是赵高的人，在监视你。</p>
+          <p>你再次面临抉择。</p>
+        `,
+        choices: [
+          { text: '转向逃亡', next: 'escape_plan', tag: 'A' },
+          { text: '转向沉默，静观其变', next: 'wait_plan', tag: 'B' },
+          { text: '转向讨好，上书表示臣服', next: 'flatter_plan', tag: 'C' }
+        ]
+      },
+      {
+        id: 'flatter_plan',
+        text: `
+          <p>你决定上书胡亥，表示恭贺与臣服。</p>
+          <p>你写道："二世皇帝陛下圣明，承先帝之业，臣等不胜欣喜。"</p>
+          <p>但你的门客看了，摇头："公子，这不够。胡亥杀宗室，不是因为你们不恭贺，而是因为你们<span class="highlight">存在本身就是威胁</span>。"</p>
+          <p>"你是秦始皇的儿子，有继承权。只要活着，就是潜在竞争者。一封恭贺信，消除不了这个威胁。"</p>
+          <p>你想起了李斯——他曾帮助胡亥继位，功劳最大。但赵高构陷他谋反，他仍被腰斩于咸阳市，夷三族。</p>
+          <p>讨好，需要更极端的方式。</p>
+        `,
+        choices: [
+          { text: '继续上书，但内容更加卑微', next: 'flatter_more', tag: 'A' },
+          { text: '放弃讨好，寻找其他出路', next: 'rethink_flatter', tag: 'B' }
+        ]
+      },
+      {
+        id: 'flatter_more',
+        text: `
+          <p>你再次上书，这次更加卑微："臣高叩首，愿为陛下犬马，生生世世，不敢或忘。"</p>
+          <p>胡亥看了，笑了笑，对赵高说："这位兄长，倒是识时务。"</p>
+          <p>赵高说："陛下，公子高越是卑微，越说明他心怀恐惧。心怀恐惧的人，最危险。"</p>
+          <p>胡亥点头。三日后，你的府邸被包围。使者宣读诏书："公子高心怀怨望，收族。"</p>
+          <p>你的讨好，没有换来安全。因为<span class="highlight">在赵高的逻辑里，卑微等于心虚，心虚等于有罪</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '李斯曾对秦有大功，辅佐秦始皇统一六国，又助胡亥继位。但赵高仍构陷他谋反，最终腰斩夷族。《史记·李斯列传》详细记载了这一过程。讨好改变不了权力斗争的本质。'
+      },
+      {
+        id: 'rethink_flatter',
+        text: `
+          <p>你放弃了讨好的念头。</p>
+          <p>但清洗仍在继续。你每天都能听到新的死讯。</p>
+          <p>你的府邸外开始出现陌生的面孔——是赵高的人，在监视你。</p>
+          <p>你再次面临抉择。</p>
+        `,
+        choices: [
+          { text: '转向逃亡', next: 'escape_plan', tag: 'A' },
+          { text: '转向沉默，静观其变', next: 'wait_plan', tag: 'B' }
+        ]
+      },
+      {
+        id: 'wait_plan',
+        text: `
+          <p>你决定闭门不出，静观其变。</p>
+          <p>你不再接见宾客，不再谈论朝政，每日只在府中读书、陪伴家人。</p>
+          <p>但沉默不能保护你。秦朝的法律中，"不作为"也是罪。赵高"令鞠治之"——主动制造罪名。</p>
+          <p>你的邻居开始被问询。在<span class="highlight">连坐制度</span>下，他们会为了自保，说出任何赵高想听的话。</p>
+          <p>十日后，消息传来：又一位公子被处死，罪名是"心怀怨望，不行朝贺"。</p>
+          <p>不行朝贺——沉默，也是罪。</p>
+        `,
+        choices: [
+          { text: '继续沉默，希望风暴过去', next: 'wait_more_2', tag: 'A' },
+          { text: '改变策略，主动寻找出路', next: 'active_seek', tag: 'B' }
+        ]
+      },
+      {
+        id: 'wait_more_2',
+        text: `
+          <p>你继续沉默。</p>
+          <p>但风暴没有过去。赵高需要不断立威，宗室是最好的靶子。</p>
+          <p>你的府邸终于被包围。使者宣读诏书："公子高闭门不出，心怀怨望，收族。"</p>
+          <p>你被押往咸阳市集。在刑场上，你看见了其他兄弟——十二位公子，全部到齐。</p>
+          <p>你们的罪名各不相同，但结局一样：公开处决，以儆效尤。</p>
+          <p><span class="highlight">在需要猎物的猎人眼里，沉默的鹿和奔跑的鹿，没有区别</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '赵高"令鞠治之"——主动审讯制造罪名。在秦朝的司法体系下，沉默可以被解读为"心怀怨望"，恭贺可以被解读为"心怀恐惧"。宗室的身份本身就是原罪。'
+      },
+      {
+        id: 'active_seek',
+        text: `
+          <p>你意识到沉默不能保护自己。</p>
+          <p>你开始思考：在这个局里，什么才能让胡亥放心？</p>
+          <p>你的老门客说："公子，胡亥怕的是你们争位。你若主动放弃继承权，甚至主动放弃生命，他就不会杀你了。"</p>
+          <p>"因为杀一个已经放弃的人，没有意义。"</p>
+          <p>你想起了父皇的陵墓——郦山。那里正在修建，需要陪葬者。</p>
+          <p>一个念头在你心中形成：以<span class="highlight">殉葬</span>之名，行求生之实。</p>
+        `,
+        choices: [
+          { text: '准备上书，请求为始皇殉葬', next: 'sacrifice_path', tag: 'A' },
+          { text: '犹豫，觉得太过屈辱', next: 'hesitate', tag: 'B' }
+        ]
+      },
+      {
+        id: 'hesitate',
+        text: `
+          <p>你犹豫了。殉葬？那是奴才做的事。你是秦始皇的儿子，大秦的皇子。</p>
+          <p>你的妻子看着你，欲言又止。孩子正在院中玩耍，笑声清脆。</p>
+          <p>你又等了三天。三天里，两位公子被处死，一位公主被"矺死"。</p>
+          <p>你的门客急报：赵高的人已经开始调查你的府邸，你的邻居被问询了。</p>
+          <p>时间不多了。</p>
+        `,
+        choices: [
+          { text: '不再犹豫，上书殉葬', next: 'sacrifice_path', tag: 'A' },
+          { text: '继续犹豫，希望有别的办法', next: 'hesitate_more', tag: 'B' }
+        ]
+      },
+      {
+        id: 'hesitate_more',
+        text: `
+          <p>你继续犹豫。</p>
+          <p>但赵高没有给你时间。禁军包围了你的府邸。</p>
+          <p>使者宣读诏书："公子高闭门不出，心怀怨望，收族。"</p>
+          <p>你被押走。你的妻子、幼子、门客，全部被押走。</p>
+          <p>在刑场上，你后悔莫及。但<span class="highlight">在权力斗争中，犹豫是最致命的弱点</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '公子高的上书是在清洗期间进行的，说明时间窗口极窄。犹豫意味着死亡。《史记》记载他"欲奔，恐收族，乃上书"——是在逃亡和殉葬之间快速做出了选择。'
+      },
+      {
+        id: 'sacrifice_path',
+        text: `
+          <p>你决定上书，请求为秦始皇殉葬。</p>
+          <p>但这封上书，需要极其精妙的措辞。你不能表现出恐惧，不能表现出怨恨，只能表现出感恩和忠诚。</p>
+          <p>你提笔写道：</p>
+          <p>"<span class="highlight">先帝无恙时，臣入则赐食，出则乘舆。御府之衣，臣得赐之；中厩之宝马，臣得赐之。臣当从死而不能，为人子不孝，为人臣不忠。不忠者无名以立於世，臣请从死，愿葬郦山之足。唯上幸哀怜之。</span>"</p>
+          <p>你没有提胡亥的清洗，没有提自己的恐惧。你只是回忆父皇的恩典，自责未能随父皇而去，请求葬于郦山。</p>
+          <p>这是你最屈辱的时刻——一个皇子，必须用自我矮化来证明自己没有威胁。</p>
+        `,
+        choices: [
+          { text: '将书递入宫中，等待回复', next: 'wait_reply', tag: 'A' },
+          { text: '再读一遍，确认措辞无误', next: 'wait_reply', tag: 'B' }
+        ]
+      },
+      {
+        id: 'wait_reply',
+        text: `
+          <p>上书递入宫中。</p>
+          <p>等待是最煎熬的。你的妻子抱着孩子，坐在你身边。你们没有说话，但彼此都明白：这是生死关头。</p>
+          <p>三日后，使者来了。但不是来抓你的——是来传话的。</p>
+          <p>"二世皇帝大说，召赵高而示之，曰：'此可谓急乎？'赵高曰：'人臣当忧死而不暇，何变之得谋！'二世可其书，赐钱十万以葬。"</p>
+          <p>胡亥大喜。他认为你已经走投无路（"此可谓急乎"），赵高也认为你只顾着忧死，根本无力谋反。</p>
+          <p>他们批准了你的请求，赐钱十万，让你安葬。</p>
+          <p>你以一人之死，换全族之生。</p>
+        `,
+        choices: [
+          { text: '接受这个结果，准备与家人告别', next: 'family_farewell', tag: 'A' },
+          { text: '后悔，想找其他兄弟联合反抗', next: 'regret_rebel', tag: 'B' },
+          { text: '崩溃，无法接受这样的结局', next: 'breakdown', tag: 'C' }
+        ]
+      },
+      {
+        id: 'regret_rebel',
+        text: `
+          <p>你后悔了。你想起其他兄弟，想起扶苏，想起蒙恬。</p>
+          <p>"也许还有一线希望？"你暗中派人去联络其他公子。</p>
+          <p>但你的上书已经递入宫中，赵高已经知道你的处境。你现在的一举一动，都在监视之下。</p>
+          <p>你的密使刚出府门，就被赵高的人截获。赵高将此事禀报胡亥："公子高诈降谋变，其心可诛。"</p>
+          <p>胡亥大怒，下令收族。你的家人被押走，你被处以极刑。</p>
+          <p><span class="highlight">在暴君面前，反复无常比坚定反抗更致命</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '胡亥批准殉葬后，公子高若反悔，会被视为"诈降"。在秦朝法律中，"诈降"是重罪，会株连三族。历史上没有公子高反悔的记录，但这个结局符合秦朝的法律逻辑。'
+      },
+      {
+        id: 'breakdown',
+        text: `
+          <p>你崩溃了。</p>
+          <p>你无法接受这样的结局——一个皇子，竟然要用殉葬来换取生存。</p>
+          <p>你拒绝进食，拒绝见人，整日关在房中。你的妻子在门外哭泣，孩子在门外喊父亲。</p>
+          <p>但你的崩溃，给了赵高新的把柄。他向胡亥报告："公子高神志失常，恐生变故。"</p>
+          <p>胡亥下令提前处决你。你的家人被收族。</p>
+          <p>你的崩溃，加速了你的灭亡。</p>
+        `,
+        result: 'lose',
+        historyNote: '在秦朝的政治环境中，情绪失控会被视为"神志失常"或"心怀怨望"。公子高必须保持冷静，完成整个表演，才能让胡亥放心。'
+      },
+      {
+        id: 'family_farewell',
+        text: `
+          <p>你决定接受命运，与家人告别。</p>
+          <p>你抱起幼子，他已经三岁，正睁大眼睛看着你。你不确定他是否明白发生了什么。</p>
+          <p>你对妻子说："我死后，你们会被赦免。胡亥需要显示他的'仁慈'，他不会杀你们。"</p>
+          <p>妻子泪流满面，但她点头。她明白，这是唯一的生路。</p>
+          <p>你走出府门，最后一次回望。你的府邸不大，但它是你的家。你的家人站在门口，看着你远去。</p>
+          <p>你被送往郦山。在那里，你将永远躺在父皇陵墓的脚下。</p>
+          <p>这是最屈辱的破局——<span class="highlight">以彻底自我矮化，消解对方杀戮的动机</span>。</p>
+        `,
+        result: 'win',
+        historyNote: '《史记·秦始皇本纪》明确记载："公子高欲奔，恐收族，乃上书曰...二世可其书，赐钱十万以葬。"公子高以一人之死，换全族之生。这是秦二世清洗宗室期间，唯一一个以非暴力方式保全家族的宗室成员。破局核心：将"死亡"重新定义为"忠诚"和"恩典"，让施暴者相信受害者已经彻底驯服。'
+      },
+      {
+        id: 'references',
+        text: `
+          <p><strong>【史料参考】</strong></p>
+          <p>本关卡所有情节均基于以下史书记载：</p>
+          <p><strong>1. 《史记·秦始皇本纪》</strong></p>
+          <p>"二世然高之言，乃更为法律。於是群臣诸公子有罪，辄下高，令鞠治之。杀大臣蒙毅等，公子十二人僇死咸阳市，十公主矺死於杜，财物入於县官，相连坐者不可胜数。"</p>
+          <p>"公子高欲奔，恐收族，乃上书曰：'先帝无恙时，臣入则赐食，出则乘舆。御府之衣，臣得赐之；中厩之宝马，臣得赐之。臣当从死而不能，为人子不孝，为人臣不忠。不忠者无名以立於世，臣请从死，愿葬郦山之足。唯上幸哀怜之。'书上，二世大说，召赵高而示之，曰：'此可谓急乎？'赵高曰：'人臣当忧死而不暇，何变之得谋！'二世可其书，赐钱十万以葬。"</p>
+          <p><strong>2. 《史记·李斯列传》</strong></p>
+          <p>赵高构陷李斯谋反，李斯被腰斩于咸阳市，夷三族。详细记载了赵高"令鞠治之"的审讯手段。</p>
+          <p><strong>3. 《史记·刺客列传》</strong></p>
+          <p>荆轲刺秦事件的详细经过，为本关卡叙事格式提供参考。</p>
+          <p><strong>4. 《资治通鉴·秦纪二》</strong></p>
+          <p>胡亥继位及清洗宗室的时间线：前210年九月始皇崩，前209年四月"更为法律"开始清洗，前209年七月陈胜吴广起义。</p>
+          <p><strong>5. 《秦律》相关条文（睡虎地秦简）</strong></p>
+          <p>"什伍连坐"制度：一家犯罪，邻里同罪。"越城"罪：擅自翻越城墙者重罚。"匿亡"罪：藏匿逃亡者与逃亡者同罪。</p>
+          <p><strong>6. 历史背景说明</strong></p>
+          <p>秦朝户籍制度："使黔首自实田"，每个人都要登记在册。城门盘查需要符传。宵禁制度：夜间不得通行。</p>
+          <p>军功爵制：军队只听命于皇帝，宗室无兵权。蒙恬手握三十万大军，接到伪诏后选择自杀。</p>
+        `,
+        choices: []
+      }
+    ]
+  },
+  {
+    id: 'caoshuang',
+    era: '曹魏 · 正始十年',
+    name: '富家翁之阱',
+    desc: '高平陵之变，你手握天子、军队、粮草，却收到司马懿"只免官"的承诺。',
+    tag: '承诺陷阱',
+    scenes: [
+      {
+        id: 'start',
+        text: `
+          <p>你是曹爽，大将军，辅政大臣。今日正月初六，你陪皇帝曹芳去高平陵祭扫先帝。</p>
+          <p>你本不该全部出城。大司农桓范曾劝你："兄弟数人总揽禁军，不宜同时出城。"</p>
+          <p>但你笑了："谁敢尔邪？"司马懿已经称病多年，奄奄一息。洛阳城内全是你的亲信。</p>
+          <p>现在，你们兄弟三人全部出城。洛阳城门在你们身后关闭。</p>
+          <p>刚到高平陵，斥候来报：<span class="highlight">司马懿突然"病愈"</span>，以郭太后名义关闭所有城门，占领武库，接管了禁军！</p>
+          <p>你的大脑一片空白。那个卧床不起的老人，怎么突然能骑马带兵？</p>
+          <p>更可怕的是——司马懿已向郭太后上奏，说你"背弃顾命，败乱国典"。</p>
+          <p>侍中许允、尚书陈泰来传话："太傅指洛水为誓，<span class="highlight">只免官，不杀头</span>。"</p>
+          <p>你看着皇帝——天子就在你身边。这是你最强大的牌。但你也知道，司马懿已经七十岁，时日无多。</p>
+          <p>你从小富贵，从未经历过真正的生死抉择。你只想保全自己，保全家人，过安稳日子。</p>
+          <p>但<span class="highlight">在政治斗争中，"只想做富家翁"是最致命的幻想</span>。</p>
+        `,
+        choices: [
+          { text: '问许允：司马懿真会守信吗？', next: 'doubt_promise', tag: 'A' },
+          { text: '召集兄弟和将领商议对策', next: 'council', tag: 'B' },
+          { text: '说：我无尺寸之功，愿以侯还第', next: 'surrender', tag: 'C' }
+        ]
+      },
+      {
+        id: 'doubt_promise',
+        text: `
+          <p>你问许允："司马懿真会守信？"</p>
+          <p>许允低头："太傅指洛水为誓......"</p>
+          <p>你忽然想起一件事：洛水之誓。汉光武帝刘秀曾指洛水为誓，饶恕朱鲔，后来确实守信。</p>
+          <p>但司马懿不是刘秀。而且，<span class="highlight">誓言是弱者的武器，不是强者的约束</span>。</p>
+          <p>就在这时，大司农桓范突然赶到——他是从大司农府跑出来的，带着大司农印！</p>
+          <p class="dialogue"><span class="speaker">桓范</span><span class="content">"卿别营近在阙南，洛阳典农治在城外，呼召如意。卿所忧无食，大司农印章在我身，何忧无食？"</span></p>
+          <p>你心中一震。桓范说的是：你的别营在城南，一呼即应；洛阳典农在城外，随时可以调遣；大司农印在他手上，粮草无忧。</p>
+          <p>你终于开始清点自己手中的牌：<span class="highlight">天子、军队、粮草、时间</span>。</p>
+        `,
+        choices: [
+          { text: '追问桓范：具体该怎么做？', next: 'ask_huanfan', tag: 'A' },
+          { text: '召集所有将领，公开商议', next: 'council', tag: 'B' },
+          { text: '说：司马懿只是想夺权，我以侯还第，不失富家翁', next: 'rich_man', tag: 'C' }
+        ]
+      },
+      {
+        id: 'council',
+        text: `
+          <p>你召集兄弟和将领：司马懿关闭了城门，但说"只免官"。我们该怎么办？</p>
+          <p>主簿杨综斩关奔来，浑身是血："公居伊周之位，一旦以罪见黜，虽欲牵黄犬，复可得乎！"</p>
+          <p>"若挟天子保许昌，杖大威以羽檄征四方兵，孰敢不从！舍此而去，欲就东市，岂不痛哉！"</p>
+          <p>司马鲁芝也说："大将军，我们有天子，有军队，有粮草。司马懿七十老翁，时日无多。我们耗得起！"</p>
+          <p>你环顾众人——他们都在看着你。等待你的决定。</p>
+          <p>但你注意到，也有人低头不语。他们在想什么？是害怕？还是在观望？</p>
+        `,
+        choices: [
+          { text: '问杨综：具体怎么挟天子去许昌？', next: 'ask_yangzong', tag: 'A' },
+          { text: '说：让我再想想......', next: 'hesitate_cao', tag: 'B' },
+          { text: '说：司马懿年事已高，不会赶尽杀绝', next: 'rich_man', tag: 'C' }
+        ]
+      },
+      {
+        id: 'ask_huanfan',
+        text: `
+          <p>桓范说："大将军，现在不是犹豫的时候。司马懿已经动手了，我们必须立刻行动。"</p>
+          <p>"第一步：以天子名义宣布司马懿谋反。这是最关键的一步——<span class="highlight">政治正统在你这边</span>。"</p>
+          <p>"第二步：挟天子前往许昌。许昌是旧都，有宫殿、有储备，可以作为临时都城。"</p>
+          <p>"第三步：调四方军队勤王。各地诸侯看到天子诏书，不敢不响应。"</p>
+          <p>"司马懿已经七十岁，时日无多。我们只要拖住他，时间就在我们这边。"</p>
+          <p>你听着，心跳加速。这是赌博，但似乎是唯一的出路。</p>
+        `,
+        choices: [
+          { text: '立刻以天子名义写诏书，宣布司马懿谋反', next: 'write_edict', tag: 'A' },
+          { text: '说：但我的家人还在洛阳......', next: 'family_concern', tag: 'B' },
+          { text: '说：让我再考虑考虑', next: 'hesitate_cao', tag: 'C' }
+        ]
+      },
+      {
+        id: 'ask_yangzong',
+        text: `
+          <p>杨综说："大将军，现在最重要的是<span class="highlight">快</span>。司马懿的政变是偷袭，他没有准备充分。"</p>
+          <p>"第一步：立刻以天子名义写诏书，宣布司马懿谋反。诏书要简明扼要，直指司马懿'背弃顾命，关闭城门'。"</p>
+          <p>"第二步：派可靠之人持诏书去城南别营，调兵护卫天子。"</p>
+          <p>"第三步：同时派人去洛阳典农治所，调屯田兵。"</p>
+          <p>"第四步：挟天子直奔许昌。不要犹豫，不要回头。"</p>
+          <p>杨综最后说："大将军，<span class="highlight">兵贵神速，犹豫即败</span>。"</p>
+        `,
+        choices: [
+          { text: '立刻以天子名义写诏书，宣布司马懿谋反', next: 'write_edict', tag: 'A' },
+          { text: '说：但司马懿已经控制了城门......', next: 'gate_concern', tag: 'B' },
+          { text: '说：让我再想想', next: 'hesitate_cao', tag: 'C' }
+        ]
+      },
+      {
+        id: 'write_edict',
+        text: `
+          <p>你下定决心，对皇帝说："陛下，太傅司马懿背弃顾命，关闭城门，图谋不轨。臣请陛下下诏，以正视听。"</p>
+          <p>皇帝年少，惊恐地点头。</p>
+          <p>你亲自执笔，写下诏书：</p>
+          <p class="dialogue"><span class="speaker">诏书</span><span class="content">"大将军曹爽辅政，司马懿背弃先帝遗命，擅闭城门，夺据武库，罪在不赦。天下诸侯，当共讨之。"</span></p>
+          <p>桓范看着诏书，眼中含泪："大将军，这才是正朔。"</p>
+          <p>诏书已成，接下来必须立刻行动。司马懿随时可能派兵追击。</p>
+        `,
+        choices: [
+          { text: '派桓范持诏书去城南别营，调兵护卫（你的亲兵，驻扎城外，忠诚度最高）', next: ' mobilize_guard', tag: 'A' },
+          { text: '先派人去洛阳典农治所，调屯田兵（朝廷兵马，负责屯田，非直属）', next: ' mobilize_farmers', tag: 'B' },
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'C' }
+        ]
+      },
+      {
+        id: ' mobilize_guard',
+        text: `
+          <p>桓范接过诏书，翻身上马："大将军，我去城南别营，一个时辰内带兵回来！"</p>
+          <p>你目送桓范离去，心中忐忑不安。</p>
+          <p>半个时辰后，远处传来马蹄声。桓范回来了，身后跟着三千精兵！</p>
+          <p>别营将领跪地："末将听候大将军调遣！"</p>
+          <p>你终于有了护卫天子的军队。但司马懿随时可能得知消息，必须尽快行动。</p>
+        `,
+        choices: [
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'A' },
+          { text: '再等等典农兵', next: 'wait_farmers', tag: 'B' }
+        ]
+      },
+      {
+        id: ' mobilize_farmers',
+        text: `
+          <p>你派司马鲁芝去洛阳典农治所调屯田兵。</p>
+          <p>鲁芝快马而去。你焦急等待。</p>
+          <p>一个时辰后，鲁芝回来，身后跟着两千屯田兵，还带着粮草辎重！</p>
+          <p>鲁芝说："大将军，典农兵虽非精锐，但熟悉地形，可作前锋。"</p>
+          <p>你点点头。军队已集，不能再等。</p>
+        `,
+        choices: [
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'A' },
+          { text: '再等等别营兵', next: 'wait_guard', tag: 'B' }
+        ]
+      },
+      {
+        id: 'wait_farmers',
+        text: `
+          <p>你说："再等等，等典农兵到了一起走。"</p>
+          <p>桓范急道："大将军，兵贵神速！司马懿随时可能派兵追击，我们不能等！"</p>
+          <p>但你坚持要等。又一个时辰过去了。</p>
+          <p>典农兵还没到。但斥候来报：司马懿派蒋济率五千兵出城，正向高平陵方向赶来！</p>
+          <p>桓范大喊："快走！再不走就来不及了！"</p>
+        `,
+        choices: [
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'A' },
+          { text: '说：但典农兵还没到......', next: 'hesitate_cao', tag: 'B' }
+        ]
+      },
+      {
+        id: 'wait_guard',
+        text: `
+          <p>你说："再等等，等别营兵到了一起走。"</p>
+          <p>司马鲁芝急道："大将军，司马懿已经知道我们调兵了！斥候来报，蒋济正率兵赶来！"</p>
+          <p>你犹豫了。再等，可能被包围；不等，兵力不足。</p>
+          <p>桓范说："大将军，三千兵加两千屯田兵，够了！关键是天子在手，政治正统在我们这边！"</p>
+        `,
+        choices: [
+          { text: '立刻挟天子起程，直奔许昌', next: 'rush_xuchang', tag: 'A' },
+          { text: '说：让我再想想......', next: 'hesitate_cao', tag: 'B' }
+        ]
+      },
+      {
+        id: 'rush_xuchang',
+        text: `
+          <p>你下令："全军起程，护卫天子，直奔许昌！"</p>
+          <p>三千别营兵在前开道，两千屯田兵护卫两翼，天子车驾在中军。</p>
+          <p>桓范高举大司农印："粮草无忧！"</p>
+          <p>你们连夜行军，一日一夜到达许昌。</p>
+          <p>许昌是旧都，有宫殿、有储备。你以天子名义发出诏书：司马懿谋反，天下诸侯当共讨之！</p>
+          <p>消息传开，天下震动。司马懿虽然控制了洛阳，但你手握天子——政治正统在你这边。</p>
+          <p>各地诸侯开始观望。有人支持你，有人观望，但没有人敢公开支持司马懿。</p>
+          <p>司马懿年事已高，时间站在你这边。<span class="highlight">你终于明白：手握王炸的人，不需要谈判</span>。</p>
+          <p>最终，司马懿在孤立中病逝。你回到洛阳，重掌大权。</p>
+          <p>这不是最体面的胜利，但你活下来了，你的家族也活下来了。</p>
+        `,
+        result: 'win',
+        historyNote: '历史上曹爽拒绝了桓范的建议，选择投降，最终被夷三族。桓范痛哭"曹子丹佳人，生汝兄弟，犊耳！"曹爽手握天子、军队、粮草、大司农印、许昌旧都，却相信司马懿"只免官"的承诺——这是历史上最典型的"承诺陷阱"。破局之道：挟天子以令诸侯，时间站在年轻人一边。'
+      },
+      {
+        id: 'family_concern',
+        text: `
+          <p>桓范叹气："大将军，你的家人在洛阳，确实危险。但你要想清楚——"</p>
+          <p>"如果你投降，司马懿会放过你的家人吗？历史上，权力斗争失败者，全家被诛是常态。"</p>
+          <p>"但如果你挟天子去许昌，司马懿反而不敢动你的家人——因为他知道，杀了你家人，你会跟他拼命到底。"</p>
+          <p>"而且，<span class="highlight">只有你有能力救他们</span>。你死了，他们更没活路。"</p>
+          <p>你沉默了。桓范说得对，但你还是下不了决心。</p>
+        `,
+        choices: [
+          { text: '咬牙决定：立刻以天子名义写诏书', next: 'write_edict', tag: 'A' },
+          { text: '说：但我不能丢下家人......', next: 'hesitate_cao', tag: 'B' },
+          { text: '说：或许司马懿会守信，只免官', next: 'rich_man', tag: 'C' }
+        ]
+      },
+      {
+        id: 'gate_concern',
+        text: `
+          <p>杨综说："大将军，司马懿控制了洛阳城门，但他控制不了城外。"</p>
+          <p>"你的别营在城南，典农兵在城外。这些兵不在城内，司马懿的手伸不到。"</p>
+          <p>"而且，司马懿的政变是偷袭，他的兵力有限。他关闭了城门，但城外他控制不了。"</p>
+          <p>"我们现在在高平陵，离洛阳有一段距离。司马懿派人来传话，说明他也不敢轻易出城追击。"</p>
+          <p>"<span class="highlight">他在城内虚张声势，我们在城外有兵有粮</span>。优势其实在我们这边。"</p>
+        `,
+        choices: [
+          { text: '恍然大悟：立刻以天子名义写诏书', next: 'write_edict', tag: 'A' },
+          { text: '说：但如果他追击呢？', next: 'pursuit_concern', tag: 'B' },
+          { text: '说：我还是不放心......', next: 'hesitate_cao', tag: 'C' }
+        ]
+      },
+      {
+        id: 'pursuit_concern',
+        text: `
+          <p>杨综说："如果他追击，我们就迎战。"</p>
+          <p>"但大将军，司马懿七十岁了，他敢出城追击吗？他出城，洛阳城内空虚，他的政变就前功尽弃。"</p>
+          <p>"他不敢追击。他只会守在城里，等你自己投降。"</p>
+          <p>"<span class="highlight">他的'只免官'承诺，就是让你投降的诱饵</span>。你一旦回去，就完了。"</p>
+          <p>你终于明白了。司马懿的弱点是年龄，他的承诺是陷阱。</p>
+        `,
+        choices: [
+          { text: '下定决心：立刻以天子名义写诏书', next: 'write_edict', tag: 'A' },
+          { text: '说：但我需要时间准备......', next: 'hesitate_cao', tag: 'B' }
+        ]
+      },
+      {
+        id: 'xuchang',
+        text: `
+          <p>你下定决心，对皇帝说："陛下，太傅司马懿谋反，关闭城门，臣请陛下移驾许昌，以正朝纲。"</p>
+          <p>皇帝年少，惊恐地点头。</p>
+          <p>你以天子名义下令：司马懿谋反，天下诸侯当共讨之！</p>
+          <p>桓范高举大司农印："粮草无忧！"</p>
+          <p>你的别营在城南，一呼即应。洛阳典农在城外，随时可以调遣。</p>
+          <p>消息传开，天下震动。司马懿虽然控制了洛阳，但你手握天子——政治正统在你这边。</p>
+          <p>各地诸侯开始观望。有人支持你，有人观望，但没有人敢公开支持司马懿。</p>
+          <p>司马懿年事已高，时间站在你这边。<span class="highlight">你终于明白：手握王炸的人，不需要谈判</span>。</p>
+          <p>最终，司马懿在孤立中病逝。你回到洛阳，重掌大权。</p>
+          <p>这不是最体面的胜利，但你活下来了，你的家族也活下来了。</p>
+        `,
+        result: 'win',
+        historyNote: '历史上曹爽拒绝了桓范的建议，选择投降，最终被夷三族。桓范痛哭"曹子丹佳人，生汝兄弟，犊耳！"曹爽手握天子、军队、粮草、大司农印、许昌旧都，却相信司马懿"只免官"的承诺——这是历史上最典型的"承诺陷阱"。破局之道：挟天子以令诸侯，时间站在年轻人一边。'
+      },
+      {
+        id: 'surrender',
+        text: `
+          <p>你说："我无尺寸之功，岂敢受封？愿以侯还第。"</p>
+          <p>你交出了兵权，交出了天子，交出了所有筹码。</p>
+          <p>回到洛阳，司马懿笑脸相迎："大将军辛苦了。"</p>
+          <p>三日后，廷尉府上门："曹爽谋反，证据确凿。"</p>
+          <p>你大喊："司马懿指洛水为誓！"</p>
+          <p>廷尉冷笑："洛水之誓？太傅说的是'只免官'，没说'不杀头'。谋反大罪，岂可免死？"</p>
+          <p>你和你的兄弟、你的党羽、桓范——全部被诛，夷三族。</p>
+          <p>临死前，你想起了桓范的话：<span class="highlight">"曹子丹佳人，生汝兄弟，犊耳！"</span></p>
+          <p>你终于明白：在政治斗争中，对手的承诺是最危险的武器。"富家翁"三个字，是你给自己挖的坟墓。</p>
+        `,
+        result: 'lose',
+        historyNote: '历史上曹爽确实相信司马懿"指洛水为誓"的承诺，交出了所有权力，最终被夷三族。司马懿的洛水之誓成为中国历史上最著名的背信弃义案例之一。'
+      },
+      {
+        id: 'rich_man',
+        text: `
+          <p>你说："司马公正当欲夺吾权耳。吾得以侯还第，不失为富家翁。"</p>
+          <p>桓范听了，突然大哭："曹子丹佳人，生汝兄弟，犊耳！何图今日坐汝等族灭也！"</p>
+          <p>你不理解他的愤怒。你只是想保全自己，保全家人，过安稳日子。</p>
+          <p>但<span class="highlight">在政治斗争中，"只想做富家翁"是最致命的幻想</span>。</p>
+          <p>你交出了兵权。三日后，司马懿变脸，以"谋反"罪名逮捕你。</p>
+          <p>洛水之誓？那只是让你放下武器的诱饵。</p>
+          <p>你和你的兄弟、党羽全部被诛。桓范也在其中。</p>
+          <p>你死在"富家翁"三个字上。</p>
+        `,
+        result: 'lose',
+        historyNote: '"富家翁"是曹爽最著名的遗言，也是中国政治史上最典型的心理陷阱案例。损失厌恶+现状偏见让人高估对手的仁慈，低估政治的残酷。'
+      },
+      {
+        id: 'hesitate_cao',
+        text: `
+          <p>你说："让我再想想......"</p>
+          <p>桓范急了："大将军，兵贵神速！现在不走，等司马懿站稳脚跟，就再也走不了了！"</p>
+          <p>但你下不了决心。你从小富贵，从未经历过真正的生死抉择。</p>
+          <p>你高估了司马懿的仁慈，低估了他的野心。</p>
+          <p>你高估了自己的退路，低估了对手的无情。</p>
+          <p>一夜过去。第二天，司马懿已经完全控制了洛阳。你的别营被解散，典农兵被收编。</p>
+          <p>你现在连"挟天子"都做不到了——因为天子已经被司马懿控制。</p>
+          <p>你只能投降。然后，等待死亡。</p>
+          <p><span class="highlight">犹豫不是谨慎，是送给对手的礼物</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '曹爽犹豫了一整夜，最终选择投降。在政治斗争中，时间永远是进攻方的盟友。犹豫等于放弃主动权。'
+      }
+    ]
+  },
+  {
+    id: 'yuyi',
+    era: '西晋 · 太康年间',
+    name: '御医之刀',
+    desc: '晋武帝派太医署御医给齐王诊病。你知道皇帝的心思，也知道说真话的后果。',
+    tag: '被借刀杀人',
+    scenes: [
+      {
+        id: 'start',
+        text: `
+          <p>你是太医署的一名普通御医，姓陈，在太医署当值已有十余年。医术平平，但胜在谨慎。</p>
+          <p>今日，晋武帝司马炎突然召见。不是召见太医令，而是召见你——一个无名小卒。</p>
+          <p class="dialogue"><span class="speaker">晋武帝</span><span class="content">"陈医工，齐王攸近日称病，你去看看。"</span></p>
+          <p>皇帝的声音平静，但你感到一股寒意从脊背升起。</p>
+          <p>齐王司马攸，皇帝的亲弟弟。如果不是礼法所限，皇位本可能是他的。如今声望日隆，朝中大臣多有附攸之意。</p>
+          <p>你忽然明白了：皇帝为什么不派太医令程据去，而派你？</p>
+          <p>因为程据是太医令，地位高，人脉广。而你——<span class="highlight">无名无势，用完即弃</span>。</p>
+          <p>你就是这个局的刀。</p>
+        `,
+        choices: [
+          { text: '领旨，先去齐王府诊病，如实禀报', next: 'honest', tag: 'A' },
+          { text: '领旨，但先暗中打探皇帝真实意图', next: 'probe', tag: 'B' },
+          { text: '叩首推辞，说臣医术浅薄', next: 'refuse', tag: 'C' }
+        ]
+      },
+      {
+        id: 'honest',
+        text: `
+          <p>你来到齐王府，为司马攸诊脉。齐王确实有病——肝郁气滞，情志不舒。</p>
+          <p>你如实回禀："齐王确有疾，需静养。"</p>
+          <p>皇帝面色不变："知道了，你退下吧。"</p>
+          <p>三日后，皇帝下诏，命齐王攸离开洛阳，就国青州。齐王泣血上书，请求留京。皇帝不许。</p>
+          <p>齐王被迫离京，途中呕血而亡。</p>
+          <p>一个月后，你被廷尉府带走："陈医工，有人告你诊断有误，害死了齐王殿下。"</p>
+        `,
+        choices: [
+          { text: '叩首认罪，请求宽恕', next: 'die_scapegoat', tag: 'A' },
+          { text: '据理力争，出示真实脉案', next: 'die_evidence', tag: 'B' },
+          { text: '沉默不语，等待发落', next: 'die_silent', tag: 'C' }
+        ]
+      },
+      {
+        id: 'probe',
+        text: `
+          <p>你领旨后，先去拜访太医令程据——你的上司。</p>
+          <p>程据沉默良久："陈医工，你知道陛下为什么选你吗？因为你无名无势。陛下要的不是诊断，是一个说法。"</p>
+          <p>"齐王必须离开洛阳，但不能是陛下逼走的——必须是'身体不好'，该回去养病。"</p>
+          <p>你明白了。说"有病"，齐王被逼走，你是替罪羊。说"没病"，齐王被治欺君之罪。</p>
+          <p>程据又说："但陛下也需要这个'说法'站得住脚。如果齐王死在路上，而天下人都知道他是被逼死的，陛下也要担责。"</p>
+          <p class="dialogue"><span class="speaker">你</span><span class="content">"大人的意思是......"</span></p>
+          <p>程据没有回答，只是看着你。</p>
+        `,
+        choices: [
+          { text: '说：陛下需要齐王"该走"，但不能"死在路上"', next: 'fudge', tag: 'A' },
+          { text: '问：那我该怎么办？请大人指点', next: 'ask_help', tag: 'B' },
+          { text: '说：那我索性辞官归乡', next: 'resign', tag: 'C' }
+        ]
+      },
+      {
+        id: 'fudge',
+        text: `
+          <p>程据点头："你懂了。陛下要齐王离开，但不想担逼死亲弟的骂名。"</p>
+          <p>"如果你只说'有病'，齐王被迫上路，死在途中，你就是害死齐王的庸医。"</p>
+          <p>"如果你说'没病'，陛下会说齐王欺君。齐王还是死，你则是欺君之罪。"</p>
+          <p>"所以，<span class="highlight">你不能给陛下任何一个明确的答案</span>。你要让齐王的病'复杂'到无法远行，但又'不确定'到不能说是装病。"</p>
+          <p>程据最后说："我只能说到这里。接下来，是你自己的局。"</p>
+        `,
+        choices: [
+          { text: '诊断齐王"风疾初起，宜静不宜动，更不宜远行"', next: 'breakthrough', tag: 'A' },
+          { text: '诊断齐王"体虚，需调养百日"', next: 'delay2', tag: 'B' },
+          { text: '诊断齐王"情志郁结，需家人陪伴"', next: 'family_excuse', tag: 'C' }
+        ]
+      },
+      {
+        id: 'breakthrough',
+        text: `
+          <p>你入宫禀报："陛下，齐王殿下确有风疾之兆。此病最忌惊扰、劳顿与郁怒。若强行令其远行就国，舟车劳顿，病情必剧。"</p>
+          <p>"风疾之人，最宜静养，动则生变。"</p>
+          <p>皇帝沉默良久。</p>
+          <p>你暗示的是：齐王若受逼迫，可能会中风、猝死。如果齐王死在途中，天下人都会知道是被逼死的。</p>
+          <p>更重要的是，你给了皇帝一个台阶：不是齐王不想走，是病不允许他走。皇帝若强行逼迫，责任就在皇帝自己了。</p>
+          <p>最终，齐王留在了洛阳。虽然后来仍被迫离开，但至少不是由你亲手递刀。</p>
+          <p>你活下来了。<span class="highlight">让皇帝的"说法"站不住脚，比给皇帝一个完美的"说法"更安全</span>。</p>
+        `,
+        result: 'win',
+        historyNote: '历史上司马攸确实被司马炎逼迫离京，死于途中。太医署御医扮演了"工具"角色——皇帝需要医学借口来合理化政治决定。破局核心：让皇帝的借口"失效"，而不是提供"更好"的借口。扶苏式的"仁"性格不适合直接对抗，但可以通过"让诊断复杂化"来间接破局。'
+      },
+      {
+        id: 'delay2',
+        text: `
+          <p>皇帝冷笑："百日？朕等不了百日。"</p>
+          <p>三日后，齐王被强令就国。你因"延误诊断"被下狱，随后被赐死。</p>
+          <p>拖延不是策略，只是另一种顺从。而且，"拖延"给了皇帝更好的罪名——你是故意拖延、心怀不轨的庸医。</p>
+        `,
+        result: 'lose',
+        historyNote: '拖延战术在强势君主面前无效。司马炎决心已下，任何延缓都会被视为不合作，甚至被解读为"别有用心"。'
+      },
+      {
+        id: 'family_excuse',
+        text: `
+          <p>你说："齐王情志郁结，需家人陪伴，不宜远离京师。"</p>
+          <p>皇帝笑了："陈医工，你是在教朕怎么对待自己的弟弟吗？"</p>
+          <p>"情志郁结"等于说齐王因皇帝的猜忌而病。这是把病因归咎于皇帝本人。</p>
+          <p>三日后，你被廷尉府带走，罪名"诽谤皇室"。</p>
+          <p><span class="highlight">在权力面前，暗示病因与权力有关，等于自杀</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '在专制皇权下，任何把问题归因于皇帝本人的说法都是致命的。即使医学上是合理的。'
+      },
+      {
+        id: 'ask_help',
+        text: `
+          <p>程据摇头："我不能指点你。若我指点，陛下会知道。到时候不仅你死，我也死。"</p>
+          <p>"但我可以告诉你：这个局里，<span class="highlight">无名无势既是你的弱点，也是你的机会</span>。"</p>
+          <p>"陛下不指望你给出高明诊断。他只需要一个说法——任何说法。所以你的诊断不需要'正确'，只需要'有用'。"</p>
+          <p>"对陛下有用，对你就有危险。对陛下'没用'，对你可能反而安全。"</p>
+        `,
+        choices: [
+          { text: '说：我明白了。我要让陛下的"说法"失效', next: 'fudge', tag: 'A' },
+          { text: '说：我还是不明白', next: 'confused', tag: 'B' }
+        ]
+      },
+      {
+        id: 'confused',
+        text: `
+          <p>程据叹气："陈医工，你太老实了。这个局不适合老实人。"</p>
+          <p>"陛下要齐王死，但不想担杀弟之名。所以他需要一个人说'齐王有病'，这样齐王'自然'离开、'自然'死去，陛下就'自然'没有责任。"</p>
+          <p>"你就是这个'有人说'。你说完，齐王死，然后你作为'诊断错误'的庸医被处理掉。"</p>
+          <p>"所以你的破局点只有一个：<span class="highlight">不要让陛下的剧本顺利演下去</span>。"</p>
+        `,
+        choices: [
+          { text: '诊断齐王"风疾初起，宜静不宜动"', next: 'breakthrough', tag: 'A' },
+          { text: '诊断齐王"体虚，需调养百日"', next: 'delay2', tag: 'B' }
+        ]
+      },
+      {
+        id: 'refuse',
+        text: `
+          <p>你叩首："陛下，臣医术浅薄，恐诊断有误，请陛下另择高明。"</p>
+          <p>皇帝淡淡地说："好。朕另择高明。"</p>
+          <p>你松了口气。但第二天，同僚都回避你。第三天，你被调去管理药材库房。</p>
+          <p>一个月后，齐王仍被另一位御医诊断"有病"，被迫就国，死于途中。那位御医随后被处死。</p>
+          <p>你活下来了，但医学生涯结束，也未能阻止悲剧。</p>
+        `,
+        result: 'neutral',
+        historyNote: '推辞是明哲保身，但"不参与"本身就是立场。皇帝会找更听话的人替代你，而那个人往往成为替罪羊。'
+      },
+      {
+        id: 'resign',
+        text: `
+          <p>程据沉默良久："辞官归乡是个好主意。但你想过没有，陛下为什么选你？因为你无名无势，最适合当替罪羊。"</p>
+          <p>"但如果你现在辞官，陛下会想：这个人知道太多，又不听话，放他走是个隐患。"</p>
+          <p>"辞官不是出路，是另一条死路。"</p>
+          <p><span class="highlight">知道太多的人，没有退出的权利</span>。</p>
+        `,
+        choices: [
+          { text: '说：那我该怎么办？', next: 'fudge', tag: 'A' },
+          { text: '仍坚持辞官', next: 'die_resign', tag: 'B' }
+        ]
+      },
+      {
+        id: 'die_resign',
+        text: `
+          <p>你坚持辞官，上书请求归乡。皇帝批复："准。"</p>
+          <p>你收拾行囊离开洛阳。走到函谷关时，被禁军拦住。</p>
+          <p class="dialogue"><span class="speaker">禁军</span><span class="content">"陈医工，陛下赐你美酒一壶，以谢你多年侍奉。"</span></p>
+          <p>你看着那壶酒，明白了。辞官不能带走你知道的秘密。</p>
+          <p>你饮下毒酒，死在关外。</p>
+        `,
+        result: 'lose',
+        historyNote: '在权力斗争中，知道太多的人没有安全退出的可能。即使皇帝允许辞官，也会在事后消除隐患。'
+      },
+      {
+        id: 'die_scapegoat',
+        text: `
+          <p>你被投入大牢。罪名"误诊害死齐王"。</p>
+          <p>你终于明白了：派无名御医诊断，逼齐王就国，齐王死在路上——然后让无名御医承担罪名。</p>
+          <p>你是那把刀。刀用完了，自然要擦干净，或者说，扔掉。</p>
+          <p>临刑前，你想：如果当初说齐王没病呢？</p>
+          <p>答案一样。说有病，你是庸医。说没病，你是逆贼。</p>
+          <p><span class="highlight">无论你说什么，结果都是死——除非你能让皇帝的剧本演不下去</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '典型的"借刀杀人"后"弃刀"。无名御医被当作工具使用，然后被牺牲以平息舆论。'
+      },
+      {
+        id: 'die_evidence',
+        text: `
+          <p>你呈上脉案。廷尉府的人看了一眼，扔在一边。</p>
+          <p class="dialogue"><span class="speaker">廷尉</span><span class="content">"陈医工，你以为廷尉要的是真相？"</span></p>
+          <p>你被拖出大牢。真相在权力面前毫无意义。</p>
+          <p>而且，你呈上脉案被解读为"试图狡辩、对抗审查"。罪名从"误诊"升级为"欺君罔上"。</p>
+        `,
+        result: 'lose',
+        historyNote: '"真相"只是工具。当真相不符合权力需要时，会被忽略。试图"用事实说话"在已定性的案件中，往往被视为对抗。'
+      },
+      {
+        id: 'die_silent',
+        text: `
+          <p>你的沉默被当作默认。三日后，你被赐死。</p>
+          <p>在这个局里，没有中立地带。不说话，也是最差的选择。</p>
+          <p>因为沉默意味着你没有价值。没有价值的人，最容易被处理掉。</p>
+        `,
+        result: 'lose',
+        historyNote: '沉默被视为默认或软弱。既不合作也不反抗的人，通常最先被牺牲——没有盟友，也没有威慑力。'
+      }
+    ]
+  },
+  {
+    id: 'xilong',
+    era: '西晋 · 永宁元年',
+    name: '扬州之狐',
+    desc: '齐王冏起兵讨赵王伦，扬州刺史郗隆手握重兵，却困于骑墙之局。',
+    tag: '骑墙困境',
+    scenes: [
+      {
+        id: 'start',
+        text: `
+          <p>你是郗隆，扬州刺史。曾祖父郗虑，汉末名士；家族世代簪缨。</p>
+          <p>今日，齐王司马冏檄文送达扬州，号召天下起兵讨伐赵王司马伦——那个篡夺皇位的宗室。</p>
+          <p>州中将士群情激奋，纷纷请战。但你的侄子郗鉴和诸子都在洛阳，在赵王伦控制之下。</p>
+          <p>你若响应齐王冏，家人必死。你若不响应，扬州将士可能自行其是，你照样控制不住。</p>
+          <p>你召集僚吏商议。主簿赵诱说："赵王篡逆，海内所疾。为明使君计，莫若自将精兵，径赴许昌，<span class="highlight">上策也</span>。"</p>
+          <p>前秀才虞潭说："遣将将兵会之，<span class="highlight">中策也</span>。量遣小军，随形助胜，<span class="highlight">下策也</span>。"</p>
+        `,
+        choices: [
+          { text: '采纳上策，自将精兵赴许昌', next: 'upper_strategy', tag: 'A' },
+          { text: '采纳下策，量遣小军观望', next: 'lower_strategy', tag: 'B' },
+          { text: '私下与别驾顾彦密谋', next: 'secret', tag: 'C' }
+        ]
+      },
+      {
+        id: 'upper_strategy',
+        text: `
+          <p>你决定响应齐王冏，自将精兵赴许昌。</p>
+          <p>但刚要下令，忽然想起：侄子郗鉴、儿子们，都在洛阳。</p>
+          <p>赵王伦一旦发现你起兵，他们会怎样？</p>
+          <p>你的手停在半空。赵诱催促："使君，兵贵神速！"</p>
+          <p>但你做不到。你可以拿自己的命赌，但赌不起家人的命。</p>
+        `,
+        choices: [
+          { text: '仍下令出兵，舍弃洛阳家人', next: 'family_sacrifice', tag: 'A' },
+          { text: '先派密使去洛阳，试图营救家人', next: 'rescue_attempt', tag: 'B' },
+          { text: '犹豫不决，再等等看', next: 'hesitate', tag: 'C' }
+        ]
+      },
+      {
+        id: 'lower_strategy',
+        text: `
+          <p>你说："量遣小军，随形助胜。"</p>
+          <p>赵诱和虞潭对视一眼，不再说话。你知道他们在想什么：使君怯懦，不敢全力。</p>
+          <p>你以为这是稳妥的——既表达了立场，又不彻底得罪赵王伦。</p>
+          <p>别驾顾彦私下说："诱等下策，乃上计也。"</p>
+          <p>你不懂。顾彦说："赵诱说的下策，其实是上计。因为在这个局里，<span class="highlight">不全力就是找死</span>。"</p>
+        `,
+        choices: [
+          { text: '追问顾彦，听他详细解释', next: 'ask_again', tag: 'A' },
+          { text: '不听顾彦，坚持观望', next: 'wait_see', tag: 'B' },
+          { text: '改变主意，全力响应齐王冏', next: 'all_in', tag: 'C' }
+        ]
+      },
+      {
+        id: 'secret',
+        text: `
+          <p>你屏退众人，只留下别驾顾彦。</p>
+          <p class="dialogue"><span class="speaker">你</span><span class="content">"顾彦，你实话告诉我，这个局怎么破？"</span></p>
+          <p>顾彦沉吟："使君，这个局最毒的地方，在于<span class="highlight">你的家人在洛阳</span>。这是赵王伦的保险，也是你的绞索。"</p>
+          <p>"你若全力响应齐王冏，家人必死。你若不响应，扬州将士会自行投靠齐王冏，你照样失势。"</p>
+          <p>"所以这不是选边站的问题。这是<span class="highlight">怎么让赵王伦不敢杀你家人</span>的问题。"</p>
+        `,
+        choices: [
+          { text: '问：怎么让赵王伦不敢杀我家人？', next: 'breakthrough_start', tag: 'A' },
+          { text: '说：那我索性不选，守州自保', next: 'defend_only', tag: 'B' }
+        ]
+      },
+      {
+        id: 'breakthrough_start',
+        text: `
+          <p>顾彦说："让赵王伦不敢杀你家人的方法，不是讨好他，而是让他知道——杀了你家人，你会变成他最可怕的敌人。"</p>
+          <p>"现在的问题是，赵王伦认为你有牵挂，不敢全力。所以他吃定了你。"</p>
+          <p>"但如果你表现出：即使家人被杀，你也会跟他拼命到底——他就会重新计算成本。"</p>
+          <p>你明白了。<span class="highlight">破局点在于：你必须表现得比赵王伦预期的更疯狂、更不可控</span>。</p>
+          <p>顾彦又说："但还有一个更好的办法。你可以让赵王伦知道，你手里有他更怕的东西。"</p>
+        `,
+        choices: [
+          { text: '问：我手里有什么是赵王伦更怕的？', next: 'leverage', tag: 'A' },
+          { text: '决定：立刻全力起兵，展示决心', next: 'show_crazy', tag: 'B' }
+        ]
+      },
+      {
+        id: 'leverage',
+        text: `
+          <p>顾彦说："扬州。不是扬州的军队，是扬州的<span class="highlight">位置</span>。"</p>
+          <p>"齐王冏在许昌起兵，如果扬州迅速响应，赵王伦腹背受敌。但如果你按兵不动，赵王伦可以集中力量对付齐王冏。"</p>
+          <p>"所以，你的筹码是：你按兵不动的每一天，都在帮赵王伦。但你随时可以倒向齐王冏。"</p>
+          <p>"你要让赵王伦知道：你家人的命，等于他政权的稳定。杀你家人，你就倒向齐王；保你家人，你就继续观望。"</p>
+          <p>你恍然大悟。<span class="highlight">这不是选边站，这是交易</span>。</p>
+        `,
+        choices: [
+          { text: '派密使向赵王伦传话：保我家人，我保扬州不动', next: 'deal_attempt', tag: 'A' },
+          { text: '派密使向齐王冏传话：救我家人，我全力响应', next: 'deal_qi', tag: 'B' },
+          { text: '同时向两边传话，让他们竞价', next: 'auction', tag: 'A' }
+        ]
+      },
+      {
+        id: 'auction',
+        text: `
+          <p>你同时向赵王伦和齐王冏传话：</p>
+          <p>对赵王伦："殿下，扬州兵精粮足，若殿下保全臣家人，臣当为殿下守土。"</p>
+          <p>对齐王冏："殿下，臣欲响应义举，但家人在洛，受制于人。若殿下能设法保全，臣当率扬州精兵为前锋。"</p>
+          <p>这是危险的博弈。但在这个局里，<span class="highlight">两边都需要你，这就是你的价值</span>。</p>
+          <p>赵王伦收到消息后，不敢轻动你的家人——因为他不知道你会不会立刻倒向齐王。</p>
+          <p>齐王冏收到消息后，派人潜入洛阳，试图营救你的家人。</p>
+          <p>最终，齐王冏获胜，赵王伦被杀。你的家人被齐王的人救出，你率扬州兵响应，虽非首功，但保全了家族。</p>
+          <p>这不是最光彩的胜利，但在骑墙困境中，<span class="highlight">让两边都需要你，比选一边站更安全</span>。</p>
+        `,
+        result: 'win',
+        historyNote: '历史上郗隆最终犹豫不决，停檄六日不下，被愤怒的将士所杀。这个破局思路展示了"制造竞价局面"的策略——当两边都需要你时，你的筹码最大。'
+      },
+      {
+        id: 'show_crazy',
+        text: `
+          <p>你决定全力起兵，向天下宣告：即使赵王伦杀你家人，你也与他不共戴天。</p>
+          <p>消息传到洛阳，赵王伦果然不敢杀你家人——因为他知道，杀了他们，你会变成最疯狂的复仇者。</p>
+          <p>但齐王冏的人也传回消息：你的家人被软禁，虽未受害，但处境危险。</p>
+          <p>你率军北上，与齐王冏会师。最终赵王伦败亡，你的家人被救出。</p>
+          <p>这个策略成功了，但代价是你押上了全家人的命。如果赵王伦是个疯子，你的家人就完了。</p>
+        `,
+        result: 'win_alt',
+        historyNote: '"表现得比预期更疯狂"是一种威慑策略，但它依赖于对手是理性的。如果对手不理性，这个策略会惨败。'
+      },
+      {
+        id: 'deal_attempt',
+        text: `
+          <p>你派密使向赵王伦传话，请求保全家人。</p>
+          <p>赵王伦冷笑："郗隆想两头讨好？"</p>
+          <p>他杀了你的密使，把你的家人投入死牢，作为要挟你按兵不动的人质。</p>
+          <p>你现在更被动了——起兵，家人死；不起兵，齐王冏胜了你也是死路。</p>
+          <p><span class="highlight">向强者示弱求饶，只会让他更确定吃定了你</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '向掌握主动权的一方示弱，往往会强化对方的控制欲。赵王伦需要的是郗隆的恐惧，不是他的合作。'
+      },
+      {
+        id: 'deal_qi',
+        text: `
+          <p>你派密使向齐王冏传话，请求营救家人。</p>
+          <p>齐王冏答应了，派人潜入洛阳。但营救失败，你的家人被赵王伦发现，当场处死。</p>
+          <p>你悲痛欲绝，立刻起兵北上。但你的起兵已经晚了——齐王冏的主力已经逼近洛阳。</p>
+          <p>齐王冏获胜后，对你只是淡淡嘉许。你失去了家人，也失去了在新时代中的位置。</p>
+        `,
+        result: 'lose',
+        historyNote: '依赖他人营救家人是危险的——营救行动本身会暴露家人的重要性，反而加速他们的死亡。'
+      },
+      {
+        id: 'defend_only',
+        text: `
+          <p>你说："我俱受二帝恩，无所偏助，欲守州而已。"</p>
+          <p>顾彦摇头："使君，天下者，世祖之天下也。太上承代已久，今上取之，不平。使君不早发兵应之，狐疑迁延，变难将生，此州岂可保也！"</p>
+          <p>你不听。</p>
+          <p>六日后，扬州将士愤怒，参军王邃率部攻杀你。你父子及顾彦皆死。</p>
+          <p>你本想守中立，但<span class="highlight">在乱世中，中立不是立场，是靶子</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '历史上郗隆确实说了"我俱受二帝恩，无所偏助"，试图守中立。但停檄六日后被将士所杀。在政变时期，中立等于两边都得罪。'
+      },
+      {
+        id: 'hesitate',
+        text: `
+          <p>你说"再等等"，但没有人知道你在等什么。</p>
+          <p>等齐王冏胜？等赵王伦败？等一个不需要选择的时刻？</p>
+          <p>那个时刻永远不会来。六天后，扬州将士自行投靠齐王冏，你被部下所杀。</p>
+          <p>你死在等待中。</p>
+        `,
+        result: 'lose',
+        historyNote: '犹豫是骑墙困境中最差的选择。两边都会把你的犹豫视为背叛——强者恨你不顺从，弱者恨你不支持。'
+      },
+      {
+        id: 'rescue_attempt',
+        text: `
+          <p>你派密使去洛阳营救家人。但密使刚到洛阳就被抓获，你的计划暴露。</p>
+          <p>赵王伦把你的家人处死，传首扬州。你悲痛欲绝，立刻起兵，但为时已晚。</p>
+          <p>你的起兵变成了复仇，而不是政治选择。复仇的人，往往最先死。</p>
+        `,
+        result: 'lose',
+        historyNote: '秘密营救在高度监控的环境下几乎不可能成功。行动一旦暴露，会加速悲剧。'
+      },
+      {
+        id: 'family_sacrifice',
+        text: `
+          <p>你下令出兵，舍弃了洛阳的家人。</p>
+          <p>齐王冏最终获胜，赵王伦败亡。你从龙有功，被封赏。</p>
+          <p>但你的侄子、你的儿子，都死在了洛阳。你赢得了权力，输掉了家人。</p>
+          <p>夜深人静时，你想：这是破局，还是另一种困局？</p>
+        `,
+        result: 'neutral',
+        historyNote: '牺牲家人换取政治生存，是历史上常见的选择。但它不是"破局"，而是用一种损失替代另一种损失。'
+      },
+      {
+        id: 'wait_see',
+        text: `
+          <p>你坚持观望，量遣小军，随形助胜。</p>
+          <p>但扬州将士不这么想。他们认为你怯懦，不配领导他们。</p>
+          <p>六日后，将士自行其是，攻杀你父子。你的"稳妥"策略，成了你的催命符。</p>
+          <p>在需要决断的时刻，"再看看"往往是最危险的选择。</p>
+        `,
+        result: 'lose',
+        historyNote: '郗隆的"下策"在理论上可行，但在实践中，部下不会跟随一个犹豫不决的领袖。'
+      },
+      {
+        id: 'ask_again',
+        text: `
+          <p>顾彦说："赵诱说的'下策'——量遣小军——其实是上计。因为在这个局里，任何明确的选择都是错的。"</p>
+          <p>"上策是全力响应，但你家人在洛阳，不可能。中策是派将领兵，但你手下将领一旦出兵，就可能自行其是，抛弃你。"</p>
+          <p>"所以下策反而是上计：不明确表态，保持模糊。但问题是——<span class="highlight">模糊需要实力支撑</span>。你有实力让两边都忌惮你吗？"</p>
+          <p>你沉默了。你没有。扬州兵虽多，但将士心不在你。</p>
+        `,
+        choices: [
+          { text: '说：那我需要让两边都忌惮我', next: 'need_leverage', tag: 'A' },
+          { text: '仍坚持观望，希望时间解决问题', next: 'wait_more', tag: 'B' }
+        ]
+      },
+      {
+        id: 'need_leverage',
+        text: `
+          <p>顾彦点头："使君明白了。在这个局里，你不是要选边，而是要让自己变成<span class="highlight">两边都不敢得罪的人</span>。"</p>
+          <p>"赵王伦需要你守扬州，不让齐王冏得到这支兵力。齐王冏需要你响应，增强声势。"</p>
+          <p>"你的筹码不是扬州的军队，而是<span class="highlight">你的选择本身</span>。让两边都知道：谁动你家人，你就倒向另一边。"</p>
+          <p>你终于看到了破局之路。</p>
+        `,
+        choices: [
+          { text: '同时向两边传话，制造竞价局面', next: 'auction', tag: 'A' }
+        ]
+      },
+      {
+        id: 'wait_more',
+        text: `
+          <p>你继续等待。一天，两天，三天......</p>
+          <p>第四天，扬州将士愤怒，自行集结。第五天，参军王邃率部攻杀你。</p>
+          <p>你死在了"再等等"中。</p>
+        `,
+        result: 'lose',
+        historyNote: '时间不会解决骑墙困境，只会让两边都失去耐心。'
+      },
+      {
+        id: 'all_in',
+        text: `
+          <p>你改变主意，决定全力响应齐王冏。</p>
+          <p>但为时已晚。你的犹豫已经被将士看在眼里，他们认为你反复无常，不配领导。</p>
+          <p>当你下令出兵时，部下已经自行投靠了齐王冏。你被孤立，随后被杀。</p>
+          <p>在乱世中，<span class="highlight">迟到的忠诚比不忠诚更可恶</span>。</p>
+        `,
+        result: 'lose',
+        historyNote: '犹豫后的突然转变，往往被视为投机而非忠诚。部下需要稳定的领导，而不是反复无常的指挥。'
+      }
+    ]
+  }
+];
+
+// ==================== 状态管理 ====================
+let currentLevel = null;
+let currentScene = null;
+let gameHistory = [];
+let stepCount = 0;
+let totalSteps = 0;
+
+// ==================== 页面切换 ====================
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+}
+
+function showLevels() {
+  showPage('levelsPage');
+  renderLevels();
+}
+
+function renderLevels() {
+  const container = document.getElementById('levelsList');
+  container.innerHTML = levels.map(level => `
+    <div class="level-card" onclick="startLevel('${level.id}')">
+      <div class="era">${level.era}</div>
+      <div class="name">${level.name}</div>
+      <div class="desc">${level.desc}</div>
+      <div class="meta">
+        <span class="tag">${level.tag}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function startLevel(levelId) {
+  // 重置卡片动画状态（防止 retry 时卡片仍处于 slide-out 状态）
+  const card = document.getElementById('gameCard');
+  if (card) {
+    card.classList.remove('slide-out');
+    card.style.animation = 'none';
+    card.style.opacity = '1';
+    card.style.transform = 'none';
+  }
+  
+  currentLevel = levels.find(l => l.id === levelId);
+  currentScene = currentLevel.scenes.find(s => s.id === 'start');
+  gameHistory = [];
+  stepCount = 1;
+  totalSteps = estimateSteps(currentLevel);
+  showPage('gamePage');
+  renderCard();
+}
+
+function estimateSteps(level) {
+  // 估算最大步数（用于进度条）
+  let maxDepth = 0;
+  function countDepth(sceneId, depth) {
+    const scene = level.scenes.find(s => s.id === sceneId);
+    if (!scene) return;
+    if (scene.result) {
+      maxDepth = Math.max(maxDepth, depth);
+      return;
+    }
+    if (scene.choices) {
+      scene.choices.forEach(c => countDepth(c.next, depth + 1));
+    }
+  }
+  countDepth('start', 1);
+  return maxDepth || 5;
+}
+
+function renderCard() {
+  document.getElementById('cardEra').textContent = currentLevel.era;
+  document.getElementById('cardTitle').textContent = currentLevel.name;
+
+  const progress = Math.min((stepCount / totalSteps) * 100, 100);
+  document.getElementById('cardProgressBar').style.width = progress + '%';
+
+  document.getElementById('cardBody').innerHTML = currentScene.text;
+
+  const choicesHtml = currentScene.choices ? currentScene.choices.map(choice => `
+    <button class="choice-btn" onclick="makeChoice('${choice.next}')">
+      <span class="choice-tag">${choice.tag}</span>
+      <span class="choice-text">${choice.text}</span>
+    </button>
+  `).join('') : '';
+  document.getElementById('cardChoices').innerHTML = choicesHtml;
+
+  // 更新步骤指示器
+  updateStepIndicator();
+}
+
+function updateStepIndicator() {
+  const indicator = document.getElementById('stepIndicator');
+  const dots = [];
+  for (let i = 1; i <= totalSteps; i++) {
+    dots.push(`<div class="step-dot ${i === stepCount ? 'active' : ''}"></div>`);
+  }
+  indicator.innerHTML = dots.join('');
+}
+
+function makeChoice(nextSceneId) {
+  // 卡片滑出动画
+  const card = document.getElementById('gameCard');
+  card.classList.add('slide-out');
+
+  setTimeout(() => {
+    gameHistory.push({ scene: currentScene.id, choice: nextSceneId });
+    currentScene = currentLevel.scenes.find(s => s.id === nextSceneId);
+    stepCount++;
+
+    if (currentScene.result) {
+      showResult(currentScene.result);
+    } else {
+      card.classList.remove('slide-out');
+      renderCard();
+      // 重新触发动画
+      card.style.animation = 'none';
+      card.offsetHeight; // 触发重排
+      card.style.animation = 'cardIn 0.4s ease';
+    }
+  }, 300);
+}
+
+function showResult(result) {
+  showPage('resultPage');
+
+  const results = {
+    win: { icon: '🎯', title: '破局成功', class: 'win' },
+    win_alt: { icon: '⚡', title: '破局成功 · 险胜', class: 'win' },
+    neutral: { icon: '🌿', title: '苟全性命', class: 'neutral' },
+    lose: { icon: '⚰️', title: '破局失败', class: 'lose' }
+  };
+
+  const r = results[result];
+  document.getElementById('resultIcon').textContent = r.icon;
+  const titleEl = document.getElementById('resultTitle');
+  titleEl.textContent = r.title;
+  titleEl.className = 'result-title ' + r.class;
+  document.getElementById('resultText').innerHTML = currentScene.text;
+
+  const noteEl = document.getElementById('historyNote');
+  if (currentScene.historyNote) {
+    noteEl.style.display = 'block';
+    document.getElementById('historyNoteText').textContent = currentScene.historyNote;
+  } else {
+    noteEl.style.display = 'none';
+  }
+}
+
+function retryLevel() {
+  startLevel(currentLevel.id);
+}
+
+function goBack() {
+  if (gameHistory.length > 0) {
+    const lastStep = gameHistory.pop();
+    currentScene = currentLevel.scenes.find(s => s.id === lastStep.scene);
+    stepCount--;
+    showPage('gamePage');
+    renderCard();
+  }
+}
+
+// ==================== 反馈功能 ====================
+let selectedPriority = null;
+
+function showFeedback() {
+  selectedPriority = null;
+  document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('selected'));
+  document.getElementById('feedbackText').value = '';
+  document.getElementById('feedbackForm').style.display = 'block';
+  document.getElementById('feedbackSuccess').style.display = 'none';
+  showPage('feedbackPage');
+}
+
+function selectPriority(level, btn) {
+  selectedPriority = level;
+  document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function submitFeedback() {
+  const text = document.getElementById('feedbackText').value.trim();
+  
+  if (!selectedPriority) {
+    alert('请选择优先级');
+    return;
+  }
+  if (!text) {
+    alert('请输入优化建议');
+    return;
+  }
+  
+  // 构建反馈数据
+  const feedback = {
+    timestamp: new Date().toISOString(),
+    level: currentLevel ? currentLevel.name : '未选择关卡',
+    priority: selectedPriority,
+    content: text,
+    scene: currentScene ? currentScene.id : ''
+  };
+  
+  // 保存到本地存储
+  let feedbacks = JSON.parse(localStorage.getItem('poju_feedback') || '[]');
+  feedbacks.push(feedback);
+  localStorage.setItem('poju_feedback', JSON.stringify(feedbacks));
+  
+  // 显示成功页面
+  document.getElementById('feedbackForm').style.display = 'none';
+  document.getElementById('feedbackSuccess').style.display = 'block';
+}
+
+// 初始化
+showPage('titlePage');
+</script>
+
+</body>
+</html><!-- cache-bust: 1778660931 -->
