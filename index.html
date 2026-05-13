@@ -496,6 +496,160 @@
     flex-shrink: 0;
   }
 
+  .btn-feedback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background: transparent;
+    color: var(--ink-lighter);
+    font-size: 13px;
+    border: 1px solid var(--paper-dark);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    margin-top: 8px;
+  }
+
+  .btn-feedback:active {
+    border-color: var(--gold);
+    color: var(--ink);
+    transform: scale(0.98);
+  }
+
+  /* ===== 反馈页 ===== */
+  .feedback-page {
+    padding: 20px 16px;
+    background: linear-gradient(180deg, white 0%, var(--paper-warm) 100%);
+    overflow-y: auto;
+    align-items: center;
+  }
+
+  .feedback-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  .feedback-card h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .feedback-card .subtitle {
+    font-size: 13px;
+    color: var(--ink-lighter);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .feedback-field {
+    margin-bottom: 20px;
+  }
+
+  .feedback-field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .priority-options {
+    display: flex;
+    gap: 8px;
+  }
+
+  .priority-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border: 2px solid var(--paper-dark);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+  }
+
+  .priority-btn .level {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .priority-btn .desc {
+    font-size: 11px;
+    color: var(--ink-lighter);
+  }
+
+  .priority-btn.selected {
+    border-color: var(--accent);
+    background: rgba(192, 60, 40, 0.05);
+  }
+
+  .priority-btn.selected .level {
+    color: var(--accent);
+  }
+
+  .feedback-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 2px solid var(--paper-dark);
+    border-radius: 10px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    -webkit-appearance: none;
+  }
+
+  .feedback-textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  .feedback-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .feedback-actions button {
+    flex: 1;
+  }
+
+  .feedback-success {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .feedback-success .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .feedback-success h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .feedback-success p {
+    font-size: 14px;
+    color: var(--ink-lighter);
+    margin-bottom: 24px;
+  }
+
   .btn-secondary {
     display: inline-flex;
     align-items: center;
@@ -638,6 +792,52 @@
         <button class="btn-secondary" onclick="goBack()" style="max-width: 140px; padding: 12px 20px; font-size: 14px;">回到上一步</button>
         <button class="btn-secondary" onclick="showLevels()">其他关卡</button>
       </div>
+      <div style="text-align: center;">
+        <button class="btn-feedback" onclick="showFeedback()">💬 提交反馈建议</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 反馈页 -->
+  <div class="page feedback-page" id="feedbackPage">
+    <div class="feedback-card" id="feedbackForm">
+      <h3>💬 反馈建议</h3>
+      <p class="subtitle">帮助我们优化「破局」的游戏体验</p>
+
+      <div class="feedback-field">
+        <label>优先级</label>
+        <div class="priority-options">
+          <div class="priority-btn" onclick="selectPriority('P0', this)">
+            <span class="level">🔴 P0</span>
+            <span class="desc">紧急</span>
+          </div>
+          <div class="priority-btn" onclick="selectPriority('P1', this)">
+            <span class="level">🟡 P1</span>
+            <span class="desc">重要</span>
+          </div>
+          <div class="priority-btn" onclick="selectPriority('P2', this)">
+            <span class="level">🟢 P2</span>
+            <span class="desc">建议</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="feedback-field">
+        <label>优化建议</label>
+        <textarea class="feedback-textarea" id="feedbackText" placeholder="描述你遇到的问题或优化建议..."></textarea>
+      </div>
+
+      <div class="feedback-actions">
+        <button class="btn-secondary" onclick="showLevels()">取消</button>
+        <button class="btn-primary" onclick="submitFeedback()">提交</button>
+      </div>
+    </div>
+
+    <div class="feedback-card feedback-success" id="feedbackSuccess" style="display: none;">
+      <div class="icon">✅</div>
+      <h3>反馈已提交</h3>
+      <p>感谢你的建议，我们会认真评估每一条反馈</p>
+      <button class="btn-primary" onclick="showLevels()" style="max-width: 200px;">返回关卡列表</button>
     </div>
   </div>
 
@@ -2010,6 +2210,55 @@ function goBack() {
     showPage('gamePage');
     renderCard();
   }
+}
+
+// ==================== 反馈功能 ====================
+let selectedPriority = null;
+
+function showFeedback() {
+  selectedPriority = null;
+  document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('selected'));
+  document.getElementById('feedbackText').value = '';
+  document.getElementById('feedbackForm').style.display = 'block';
+  document.getElementById('feedbackSuccess').style.display = 'none';
+  showPage('feedbackPage');
+}
+
+function selectPriority(level, btn) {
+  selectedPriority = level;
+  document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function submitFeedback() {
+  const text = document.getElementById('feedbackText').value.trim();
+  
+  if (!selectedPriority) {
+    alert('请选择优先级');
+    return;
+  }
+  if (!text) {
+    alert('请输入优化建议');
+    return;
+  }
+  
+  // 构建反馈数据
+  const feedback = {
+    timestamp: new Date().toISOString(),
+    level: currentLevel ? currentLevel.name : '未选择关卡',
+    priority: selectedPriority,
+    content: text,
+    scene: currentScene ? currentScene.id : ''
+  };
+  
+  // 保存到本地存储
+  let feedbacks = JSON.parse(localStorage.getItem('poju_feedback') || '[]');
+  feedbacks.push(feedback);
+  localStorage.setItem('poju_feedback', JSON.stringify(feedbacks));
+  
+  // 显示成功页面
+  document.getElementById('feedbackForm').style.display = 'none';
+  document.getElementById('feedbackSuccess').style.display = 'block';
 }
 
 // 初始化
