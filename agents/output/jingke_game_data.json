@@ -1,0 +1,82 @@
+{
+  "id": "jingke",
+  "era": "战国 · 秦王政二十年（前227年）",
+  "name": "荆轲刺秦王",
+  "desc": "",
+  "tag": "咫尺之局",
+  "scenes": [
+    {
+      "id": "start",
+      "text": "故事开始了...",
+      "choices": [
+        {
+          "text": "扑上去",
+          "next": "choice_0",
+          "tag": "勇敢",
+          "parenthetical": "（手无寸铁扑向刺客，等于送死）"
+        },
+        {
+          "text": "大喊提醒",
+          "next": "choice_1",
+          "tag": "机智",
+          "parenthetical": "（历史上，有人大喊\"王负剑\"，秦王拔剑反击）"
+        },
+        {
+          "text": "掷出药囊",
+          "next": "choice_2",
+          "tag": "破局",
+          "parenthetical": "（夏无且以药囊掷荆轲，创造了一秒的时间差）"
+        }
+      ],
+      "result": "",
+      "historyNote": "",
+      "isEnd": false
+    },
+    {
+      "id": "choice_0",
+      "text": "你做出了错误的选择。\n\n这是最纯粹的荒诞——行动本身否定了行动的意义。\n\n**历史注脚**：\n在权力的游戏中，天真和犹豫是最致命的弱点。",
+      "choices": [
+        {
+          "text": "回到起点",
+          "next": "start",
+          "tag": "重试",
+          "parenthetical": ""
+        }
+      ],
+      "result": "lose",
+      "historyNote": "",
+      "isEnd": false
+    },
+    {
+      "id": "choice_1",
+      "text": "你活下来了，但代价不菲。\n\n历史记住了你——但记住的方式，不是你想要的。\n\n**历史注脚**：\n这是另一种荒诞——你参与了历史，但历史没有记住你。",
+      "choices": [],
+      "result": "win_alt",
+      "historyNote": "",
+      "isEnd": true
+    },
+    {
+      "id": "choice_2",
+      "text": "夏无且做出了正确的选择。\n\n这不是最体面的胜利，但你活下来了。\n\n**破局者说**：\n破局的核心，不是提供\"更好\"的方案，而是让对手的借口\"失效\"。\n\n在荒诞的世界里，不被利用，本身就是一种胜利。",
+      "choices": [],
+      "result": "win",
+      "historyNote": "《史记·刺客列传》记载：'是时侍医夏无且以其所奉药囊提荆轲。'",
+      "isEnd": true
+    },
+    {
+      "id": "retry",
+      "text": "你失败了。但历史允许假设。\n\n再试一次？",
+      "choices": [
+        {
+          "text": "回到起点",
+          "next": "start",
+          "tag": "重试",
+          "parenthetical": ""
+        }
+      ],
+      "result": "",
+      "historyNote": "",
+      "isEnd": false
+    }
+  ]
+}

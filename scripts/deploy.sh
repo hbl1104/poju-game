@@ -25,7 +25,7 @@ git push origin ${BRANCH}
 
 if [ $? -eq 0 ]; then
     echo "✅ 部署成功!"
-    echo "🔗 访问: https://${REPO%.github.io/*}.github.io/${REPO#*/}"
+    echo "🔗 访问: https://hbl1104.github.io/poju-game/"
 else
     echo "❌ 部署失败"
     exit 1

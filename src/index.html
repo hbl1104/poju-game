@@ -727,6 +727,120 @@
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--paper-dark); border-radius: 2px; }
+
+  /* ===== 历史真相页 ===== */
+  .truth-page {
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--paper);
+  }
+
+  .truth-card {
+    width: 100%;
+    max-height: calc(100vh - 40px);
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px var(--shadow);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .truth-header {
+    padding: 24px 20px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--paper-warm);
+  }
+
+  .truth-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+
+  .truth-header h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .truth-header .subtitle {
+    font-size: 13px;
+    color: var(--ink-lighter);
+  }
+
+  .truth-body {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .truth-quote {
+    background: var(--paper-warm);
+    border-left: 3px solid var(--accent);
+    padding: 16px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 20px;
+  }
+
+  .truth-quote p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  .truth-quote .quote {
+    font-family: 'Noto Serif SC', serif;
+    font-style: italic;
+    color: var(--ink);
+    padding-left: 12px;
+    border-left: 2px solid var(--gold);
+  }
+
+  .truth-details h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 16px 0 8px;
+  }
+
+  .truth-details p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .truth-note {
+    background: linear-gradient(135deg, #f8f4ef 0%, #f0ebe3 100%);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 20px;
+  }
+
+  .truth-note h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--success);
+    margin-bottom: 10px;
+  }
+
+  .truth-note p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  .truth-actions {
+    padding: 16px 20px 20px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    border-top: 1px solid var(--paper-warm);
+  }
 </style>
 </head>
 <body>
@@ -791,6 +905,7 @@
         <button class="btn-primary" onclick="retryLevel()" style="max-width: 140px; padding: 12px 20px; font-size: 14px;">重新破局</button>
         <button class="btn-secondary" onclick="goBack()" style="max-width: 140px; padding: 12px 20px; font-size: 14px;">回到上一步</button>
         <button class="btn-secondary" onclick="showLevels()">其他关卡</button>
+        <button class="btn-secondary" onclick="showTruth()" id="truthBtn" style="display:none;">📜 历史真相</button>
       </div>
       <div style="text-align: center;">
         <button class="btn-feedback" onclick="showFeedback()">💬 提交反馈建议</button>
@@ -839,7 +954,51 @@
       <p>感谢你的建议，我们会认真评估每一条反馈</p>
       <button class="btn-primary" onclick="showLevels()" style="max-width: 200px;">返回关卡列表</button>
     </div>
+  
+  <!-- 历史真相页 -->
+  <div class="page truth-page" id="truthPage">
+    <div class="truth-card">
+      <div class="truth-header">
+        <div class="truth-icon">📜</div>
+        <h2>历史真相</h2>
+        <p class="subtitle">子婴刺赵高 · 史记原文</p>
+      </div>
+      <div class="truth-body">
+        <div class="truth-quote">
+          <p>赵高让子婴斋戒，然后準備到宗庙祭拜祖先，接受传国玉玺。</p>
+          <p>子婴斋戒了五日和其二子商量说：</p>
+          <p class="quote">"丞相赵高在望夷宫弒杀秦二世，恐怕群臣诛杀他，就假装以大义为名立我为王。我听聞赵高和关东诸侯有约定，由他消灭秦国宗室，然后在关中称王。现在使我斋戒，参拜祖庙，此是想趁我在祖庙时杀死我。我就稱病不行，丞相一定亲自来我此處，来就趁机杀死他。"</p>
+        </div>
+        <div class="truth-details">
+          <h4>📅 时间</h4>
+          <p>秦二世三年（前207年）八月</p>
+          
+          <h4>🏛️ 地点</h4>
+          <p>咸阳斋宫</p>
+          
+          <h4>👤 人物</h4>
+          <p><strong>子婴</strong>：秦始皇之孙，秦二世之侄，被赵高立为秦王</p>
+          <p><strong>赵高</strong>：中车府令，弑秦二世，指鹿为马</p>
+          <p><strong>韩谈</strong>：宦官，子婴心腹，刺杀赵高的执行者</p>
+          <p><strong>阎乐</strong>：赵高女婿，咸阳令，望夷宫弑君执行者</p>
+          
+          <h4>📖 出处</h4>
+          <p>《史记·秦始皇本纪》</p>
+          <p>《史记·李斯列传》</p>
+        </div>
+        <div class="truth-note">
+          <h4>💡 破局关键</h4>
+          <p>子婴的破局之道在于<strong>逆向思维</strong>：赵高设局让子婴去太庙受玺，意图在庙中杀之。子婴识破此计，反其道而行——<strong>称病不行</strong>，引赵高亲至斋宫，然后设伏刺杀。</p>
+          <p>这是历史上著名的"以彼之道，还施彼身"。</p>
+        </div>
+      </div>
+      <div class="truth-actions">
+        <button class="btn-primary" onclick="showLevels()" style="max-width: 200px;">返回关卡列表</button>
+        <button class="btn-secondary" onclick="retryLevel()" style="max-width: 200px;">重新破局</button>
+      </div>
+    </div>
   </div>
+</div>
 
 </div>
 
@@ -2047,6 +2206,252 @@ const levels = [
         historyNote: '犹豫后的突然转变，往往被视为投机而非忠诚。部下需要稳定的领导，而不是反复无常的指挥。'
       }
     ]
+  },
+  {
+    id: 'ziying',
+    era: '秦 · 二世三年（前207年）',
+    name: '斋宫之刺',
+    desc: '赵高弑君立你为秦王，五日斋戒是你最后的机会。韩谈是监视者，也可能是唯一的盟友。',
+    tag: '信任博弈',
+    scenes: [
+      {
+        id: 'start',
+        text: `
+          <p>你是<span class="highlight">子婴</span>，秦始皇之孙，秦二世之侄。</p>
+          <p>三日前，赵高弑二世于望夷宫，召群臣欲自立。群臣莫应，赵高乃立你为秦王。</p>
+          <p>按秦制，你需<span class="highlight">斋戒五日</span>，居斋宫，然后至太庙受玺即位。</p>
+          <p>赵高遣<strong>韩谈</strong>侍奉左右，实则为监视。韩谈是中车府令，赵高心腹宦官。</p>
+          <p><strong>阎乐</strong>，赵高女婿，咸阳令，望夷宫弑君的执行者。此刻率甲士守于宫外，与韩谈一明一暗，监控你的一举一动。</p>
+          <p>你知道，五日之后，赵高会"亲自"迎你至太庙。那可能是你唯一的机会——也是最后的陷阱。</p>
+        `,
+        choices: [
+          { text: '将血书密信直接交予韩谈，请求他送出', next: 'day1_direct', tag: 'A' },
+          { text: '沉默观察，不表露任何意图', next: 'day1_silent', tag: 'B' },
+          { text: '解下先帝所赐玉佩，赠予韩谈示好', next: 'day1_gift', tag: 'C' }
+        ]
+      },
+      {
+        id: 'day1_direct',
+        text: `
+          <p>你将血书交予韩谈："韩公，我父子性命，皆系于公一念。"</p>
+          <p>韩谈大惊，后退一步："殿下何出此言！老臣奉赵公之命侍奉殿下，岂敢私受书信？"</p>
+          <p>他拒绝收下，但神色复杂，目光游移。</p>
+          <p>你意识到：作为赵高派来的监视者，韩谈不可能第一天就背叛。但你的坦诚，他记在了心里。</p>
+        `,
+        choices: [
+          { text: '不再强求，转而观察韩谈反应', next: 'day2', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day1_silent',
+        text: `
+          <p>你闭目不语，开始诵经。</p>
+          <p>韩谈亦不再言，静静侍立。</p>
+          <p>夜半，你听到宫外阎乐呵斥甲士之声。韩谈微微皱眉——那表情一闪而过，但你捕捉到了。</p>
+          <p>韩谈与阎乐，并非铁板一块。</p>
+        `,
+        choices: [
+          { text: '继续观察，等待时机', next: 'day2', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day1_gift',
+        text: `
+          <p>你解下腰间玉佩："韩公侍奉先帝多年，此玉乃先帝所赐，今赠予公。"</p>
+          <p>韩谈看着玉佩，迟疑良久。玉佩上刻着先帝御笔"忠"字。</p>
+          <p>他最终收下："殿下厚赐，老臣愧受。"</p>
+          <p>你注意到，他收玉佩时，手指微微颤抖。</p>
+        `,
+        choices: [
+          { text: '不再多言，让他自己思量', next: 'day2', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day2',
+        text: `
+          <p>次日，韩谈神色如常，但目光偶尔游移。</p>
+          <p>韩谈："殿下昨夜可安好？"</p>
+          <p>你注意到，他手中把玩着昨日所赠玉佩（若赠予）。</p>
+          <p>今日是斋戒第二日。你还有三天。</p>
+        `,
+        choices: [
+          { text: '再次请求韩谈送信出宫', next: 'day2_ask_again', tag: 'A' },
+          { text: '询问赵高近日动向', next: 'day2_probe', tag: 'B' },
+          { text: '继续沉默诵经', next: 'day3', tag: 'C' }
+        ]
+      },
+      {
+        id: 'day2_ask_again',
+        text: `
+          <p>"韩公，此信关乎大秦社稷，公当真不助我？"</p>
+          <p>韩谈沉默良久。最终摇头："殿下莫再言此事。"</p>
+          <p>但他补了一句："老臣只负责侍奉殿下起居，其他事……老臣管不了。"</p>
+          <p>这是拒绝，也是暗示——他在划清界限，但并未向赵高告发你。</p>
+        `,
+        choices: [
+          { text: '领会他的暗示，不再追问', next: 'day3', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day2_probe',
+        text: `
+          <p>"韩公，赵高近日可有异动？"</p>
+          <p>韩谈警惕："殿下何问此？"</p>
+          <p>你答："知己知彼，方能自保。"</p>
+          <p>韩谈沉吟，低声道："赵公……近日常召阎乐密议，似有不妥。"</p>
+          <p>他说完立刻闭嘴，仿佛后悔多言。</p>
+        `,
+        choices: [
+          { text: '感谢他的提醒，不再追问', next: 'day3', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day3',
+        text: `
+          <p>第三日。阎乐突然入宫。</p>
+          <p>阎乐："赵公命我来问，子婴可有异动？"</p>
+          <p>韩谈："殿下终日诵经，并无异动。"</p>
+          <p>阎乐盯着你，手按剑柄："殿下，五日之后即王位，可有什么话要我带给赵公？"</p>
+        `,
+        choices: [
+          { text: '示弱求饶：请转告赵公，子婴必当恭顺', next: 'day3_weak', tag: 'A' },
+          { text: '沉默以对，继续诵经', next: 'day3_silent', tag: 'B' },
+          { text: '反间试探：赵公立我为王，是欲我为周公还是昌邑王？', next: 'day3_probe', tag: 'C' }
+        ]
+      },
+      {
+        id: 'day3_weak',
+        text: `
+          <p>"请转告赵公，子婴必当恭顺，不敢有二心。"</p>
+          <p>阎乐大笑："识时务者为俊杰。"转身对韩谈道："看好他，别让他耍花样。"</p>
+          <p>阎乐离去。韩谈看了你一眼，目光复杂——有失望，也有理解。</p>
+        `,
+        choices: [
+          { text: '继续等待时机', next: 'day4', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day3_silent',
+        text: `
+          <p>你不看他，继续诵经。</p>
+          <p>阎乐冷哼一声，未再逼问，转身离去。</p>
+          <p>韩谈目送他离去，低声道："殿下，阎乐此人……比赵公更危险。"</p>
+          <p>这是韩谈第一次主动提醒你。</p>
+        `,
+        choices: [
+          { text: '问他何出此言', next: 'day4', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day3_probe',
+        text: `
+          <p>"阎令，赵公立我为王，是欲我为周公，还是欲我为昌邑王？"</p>
+          <p>阎乐脸色微变——昌邑王被霍光废黜，你这是在暗示赵高将行废立。</p>
+          <p>他未答，深深看你一眼，离去。</p>
+          <p>韩谈趁阎乐不备，对你微不可察地摇头——他在警告你莫要激怒阎乐。</p>
+        `,
+        choices: [
+          { text: '领会他的警告，收敛锋芒', next: 'day4', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day4',
+        text: `
+          <p>第四日。夜深，韩谈趁换岗间隙，低声与你交谈。</p>
+          <p>韩谈："殿下，明日赵高必来迎你至太庙受玺。那是……最后的机会。"</p>
+          <p>他顿了顿："阎乐会率甲士随行。殿下可有对策？"</p>
+        `,
+        choices: [
+          { text: '请求韩谈明日刺杀赵高', next: 'day4_assassinate', tag: 'A' },
+          { text: '告知韩谈自己的计划：称病引赵高亲至', next: 'day4_plan', tag: 'B' },
+          { text: '继续隐瞒，只说请韩公随侍左右', next: 'day4_hide', tag: 'C' }
+        ]
+      },
+      {
+        id: 'day4_assassinate',
+        text: `
+          <p>"韩公，赵高入门时，公可趁机刺之！"</p>
+          <p>韩谈沉默良久。</p>
+          <p>韩谈最终摇头："老臣做不到。阎乐寸步不离赵高，老臣无机会近身。"</p>
+          <p>他看着你，目光中有歉意："但老臣可以……为殿下做另一件事。"</p>
+        `,
+        choices: [
+          { text: '问他能做什么', next: 'day4_plan', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day4_plan',
+        text: `
+          <p>你说："我明日称病不行，引赵高亲至斋宫。韩公只需在侧，见机行事。"</p>
+          <p>韩谈若有所思："殿下此计……甚险。但老臣明白了。"</p>
+          <p>他顿了顿，低声道："殿下可知，赵高与关东诸侯有约定，欲灭秦宗室，自王关中？"</p>
+          <p>你心中一震。原来赵高不仅想控制你，还想彻底消灭秦王室。</p>
+        `,
+        choices: [
+          { text: '感谢韩公告知，明日见机行事', next: 'day5', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day4_hide',
+        text: `
+          <p>你说："韩公不必多问，只需明日随侍左右即可。"</p>
+          <p>韩谈垂眼："老臣遵命。"</p>
+          <p>但你注意到，他的语气比昨日冷淡了许多。不信任他，他也不会信任你。</p>
+        `,
+        choices: [
+          { text: '准备明日的局', next: 'day5', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day5',
+        text: `
+          <p>第五日。使者三次来传话："赵公请殿下即刻前往太庙。"</p>
+          <p>你卧于榻上，声音虚弱："我病甚，不能行。请赵公恕罪。"</p>
+          <p>使者离去。</p>
+          <p>韩谈低声："殿下，赵高恐将亲至。"</p>
+          <p>你握紧袖中短剑。</p>
+        `,
+        choices: [
+          { text: '等待赵高亲至', next: 'day5_confront', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day5_confront',
+        text: `
+          <p>赵高果然亲至斋宫。</p>
+          <p>赵高入门便问："国家大事，奈何不亲自前往？"</p>
+          <p>阎乐率十名甲士守在门外。</p>
+        `,
+        choices: [
+          { text: '暴起刺向赵高', next: 'day5_attack', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day5_attack',
+        text: `
+          <p>你从榻上暴起，短剑直刺赵高心口！</p>
+          <p>赵高猝不及防，瞪大眼睛："你……"</p>
+        `,
+        choices: [
+          { text: '继续刺杀', next: 'day5_outcome', tag: 'A' }
+        ]
+      },
+      {
+        id: 'day5_outcome',
+        text: `
+          <p><span class="highlight">【历史真相】</span></p>
+          <p>你手中的短剑刺入赵高心口。这位弑君者、指鹿为马者、大秦帝国的掘墓人，终于倒下。</p>
+          <p>韩谈在门外拦住阎乐，为争取了宝贵的时间。</p>
+          <p>你高举赵高首级："赵高弑君，罪当诛！"</p>
+          <p>甲士无措，阎乐惊逃。</p>
+          <p>你诛灭赵高三族，在咸阳示众。随后即位为秦王。</p>
+          <p>但大秦已不可救。四十六日后，刘邦兵临咸阳，你素车白马，奉玺投降。</p>
+          <p>你破了这个局，却破不了时代的局。</p>
+        `,
+        result: 'win',
+        historyNote: '历史上子婴确实在斋宫设伏刺杀赵高。《史记·秦始皇本纪》记载：子婴斋戒五日，与二子谋曰："丞相高杀二世望夷宫，恐群臣诛之，乃详以义立我。我闻赵高乃与楚约，灭秦宗室而王关中。今使我斋见庙，此欲因庙中杀我。我称病不行，丞相必自来，来则杀之。"高果自往，子婴遂刺杀高，夷其三族。'
+      }
+    ]
   }
 ];
 
@@ -2196,6 +2601,12 @@ function showResult(result) {
   } else {
     noteEl.style.display = 'none';
   }
+
+  // 控制历史真相按钮显示（仅对ziying关卡）
+  const truthBtn = document.getElementById('truthBtn');
+  if (truthBtn) {
+    truthBtn.style.display = (currentLevel && currentLevel.id === 'ziying') ? 'inline-flex' : 'none';
+  }
 }
 
 function retryLevel() {
@@ -2211,6 +2622,11 @@ function goBack() {
     renderCard();
   }
 }
+
+function showTruth() {
+  showPage('truthPage');
+}
+
 
 // ==================== 反馈功能 ====================
 let selectedPriority = null;
@@ -2248,7 +2664,9 @@ function submitFeedback() {
     level: currentLevel ? currentLevel.name : '未选择关卡',
     priority: selectedPriority,
     content: text,
-    scene: currentScene ? currentScene.id : ''
+    scene: currentScene ? currentScene.id : '',
+    userAgent: navigator.userAgent,
+    url: window.location.href
   };
   
   // 保存到本地存储
@@ -2256,9 +2674,46 @@ function submitFeedback() {
   feedbacks.push(feedback);
   localStorage.setItem('poju_feedback', JSON.stringify(feedbacks));
   
+  // 提交到飞书表格（通过后端API）
+  submitToFeishu(feedback);
+  
   // 显示成功页面
   document.getElementById('feedbackForm').style.display = 'none';
   document.getElementById('feedbackSuccess').style.display = 'block';
+}
+
+function submitToFeishu(feedback) {
+  // 使用 Google Forms 或其他免费表单服务作为中间层
+  // 或者调用自建的后端API
+  // 这里使用一个简单的方式：通过 fetch 提交到后端
+  
+  const FEISHU_WEBHOOK_URL = 'https://www.feishu.cn/flow/api/trigger-webhook/';
+  
+  // 由于前端无法直接调用飞书API（需要token），
+  // 我们通过调用一个中间服务来转发
+  // 这里使用一个示例URL，实际部署时需要替换为真实的后端地址
+  
+  // 尝试提交到后端（如果配置了的话）
+  if (window.POJU_CONFIG && window.POJU_CONFIG.feedbackEndpoint) {
+    fetch(window.POJU_CONFIG.feedbackEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(feedback)
+    }).catch(err => console.log('Feedback submit error:', err));
+  }
+  
+  // 同时尝试通过图片像素方式提交（绕过CORS）
+  // 这是一种hack方式，用于在没有后端的情况下收集数据
+  const img = new Image();
+  const params = new URLSearchParams({
+    t: feedback.timestamp,
+    l: encodeURIComponent(feedback.level),
+    p: feedback.priority,
+    c: encodeURIComponent(feedback.content.substring(0, 200)),
+    s: feedback.scene
+  });
+  // 这里使用一个占位URL，实际使用时需要替换为真实的收集端点
+  // img.src = 'https://your-collector.example.com/collect?' + params.toString();
 }
 
 // 初始化

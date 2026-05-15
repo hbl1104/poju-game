@@ -1,0 +1,20 @@
+{
+  "event_id": "jingke",
+  "name": "荆轲刺秦王",
+  "era": "战国 · 秦王政二十年（前227年）",
+  "location": "咸阳宫大殿",
+  "protagonist": "夏无且",
+  "dilemma_type": "咫尺之局",
+  "context": "荆轲刺秦王，殿上群臣无兵器，殿外武士无诏不得上殿。夏无且是秦宫侍医，手无寸铁。",
+  "breakthrough": "掷出药囊，创造一秒的时间差",
+  "historical_note": "《史记·刺客列传》记载：'是时侍医夏无且以其所奉药囊提荆轲。'",
+  "sources": [
+    "史记·刺客列传",
+    "战国策·燕策三"
+  ],
+  "antagonist": "荆轲",
+  "role_in_trap": "旁观者",
+  "duty": "在秦王不适时递上一丸药",
+  "object": "一只粗布药囊",
+  "choices": []
+}
